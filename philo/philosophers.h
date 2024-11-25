@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:47 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/11/25 15:51:59 by jbanchon         ###   ########.fr       */
+/*   Updated: 2024/11/25 19:48:25 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <stdint.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <sys/time.h>
 # include <unistd.h>
 
 # define ERROR_NUM_PHILO "There must be no more than 200 philosophers."
@@ -56,7 +57,7 @@ typedef struct s_simulation
 ***PARSING***
 *************/
 
-t_params			parse_input(int argc, char **argv);
+t_params			parse_input(t_simulation *sim, int argc, char **argv);
 int					parse_args(const char *argv);
 int					is_integer(const char *str);
 
@@ -66,15 +67,21 @@ int					is_integer(const char *str);
 
 int					ft_atoi(const char *str);
 int					ft_isdigit(const char *str);
+long				get_current_time(void);
 
 /**********
 ***PHILO***
 ***********/
 
+void				start_sim(t_simulation *sim);
+void				*philo_routine(void *arg);
+void				init_simulation(t_simulation *sim);
+
 /**********
 ***ERROR***
 ***********/
 
-int					error_msg(char *message);
+int					error_msg(char *message, t_simulation *sim);
+void				cleanup_simulation(t_simulation *sim);
 
 #endif

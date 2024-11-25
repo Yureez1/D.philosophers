@@ -1,37 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/25 13:11:01 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/11/25 19:51:10 by jbanchon         ###   ########.fr       */
+/*   Created: 2024/11/25 18:32:43 by jbanchon          #+#    #+#             */
+/*   Updated: 2024/11/25 19:52:32 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-int	error_msg(char *message, t_simulation *sim)
+int main(int argc, char **argv)
 {
-	printf("%s\n", message);
-	if (sim)
-		cleanup_simulation(sim);
-	return (1);
-}
-
-void cleanup_simulation(t_simulation *sim)
-{
-	int i;
-
-	i = 0;
-	while (i < sim->params->philo_count)
+	t_simulation sim;
+	
+	if (argc < 5 || argc > 6)
 	{
-		pthread_mutex_destroy(&sim->forks[i]);
-		i++;
+		printf("Usage: %s philo_count time_to_die time_to_eat time_to_sleep [meals_count]\n", argv[0]);
+		return (1);
 	}
-	pthread_mutex_destroy(&sim->print_lock);
-	free(sim->forks);
-	free(sim->philo);
-	free(sim->params);
+	parse_input(&sim, argc, argv);
+	init_simulation(&sim);
+	start_sim(&sim);
+	cleanup_simulation(&sim);
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:44 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/11/25 15:43:44 by jbanchon         ###   ########.fr       */
+/*   Updated: 2024/11/25 20:15:44 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,18 +19,18 @@ int	ft_atoi(const char *str)
 
 	sign = 1;
 	result = 0;
-	while (*str >= 9 && str <= 13 || (*str == 32))
-		*str++;
+	while ((*str >= 9 && *str <= 13) || (*str == 32))
+		str++;
 	if (*str == '-' || *str == '+')
 	{
 		if (*str == '-')
 			sign *= -1;
-		*str++;
+		str++;
 	}
 	while (*str >= '0' && *str <= '9')
 	{
-		result = result * 10 + (*str + '0');
-		*str++;
+		result = result * 10 + (*str - '0');
+		str++;
 	}
 	return (sign * result);
 }
@@ -49,4 +49,12 @@ int	ft_isdigit(const char *str)
 		i++;
 	}
 	return (1);
+}
+
+long	get_current_time(void)
+{
+	struct timeval tv;
+
+	gettimeofday(&tv, NULL);
+	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }

@@ -1,28 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philosophers.c                                     :+:      :+:    :+:   */
+/*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/22 15:03:50 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/11/25 13:05:01 by jbanchon         ###   ########.fr       */
+/*   Created: 2024/11/25 13:11:01 by jbanchon          #+#    #+#             */
+/*   Updated: 2024/11/25 13:12:39 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-static void *time_to_die(void *t_data)
+int error_msg(char *message)
 {
-
+	printf("%s\n", message);
+	exit(1);
 }
 
-static void *time_to_eat(void *t_data)
-{
-
-}
-
-static void *time_to_sleep(void *t_data)
+void	ft_free_all()
 {
 
 }

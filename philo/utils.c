@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:44 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/11/25 20:15:44 by jbanchon         ###   ########.fr       */
+/*   Updated: 2024/11/26 14:00:33 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,26 +35,33 @@ int	ft_atoi(const char *str)
 	return (sign * result);
 }
 
-int	ft_isdigit(const char *str)
+int	is_digit(const char c)
 {
-	int	i;
-
-	i = 0;
-	if (!str || str[0] == '\0')
-		return (0);
-	while (str[i])
-	{
-		if (str[i] < '0' || str[i] > '9')
-			return (0);
-		i++;
-	}
-	return (1);
+	return (c >= '0' && c <= '9');
 }
 
 long	get_current_time(void)
 {
-	struct timeval tv;
+	struct timeval	tv;
 
 	gettimeofday(&tv, NULL);
 	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
+}
+
+int	is_integer(const char *str)
+{
+	int	i;
+
+	i = 0;
+	if (!str || !str[i])
+		return (0);
+	if (str[i] == '+' || str[i] == '-')
+		i++;
+	while (str[i])
+	{
+		if (!is_digit(str[i]))
+			return (0);
+		i++;
+	}
+	return (1);
 }

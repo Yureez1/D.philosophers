@@ -6,51 +6,55 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:18:07 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/11/26 14:40:34 by jbanchon         ###   ########.fr       */
+/*   Updated: 2024/11/28 11:07:10 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-int	parse_args(const char *argv)
+int	is_valid_int(char *str)
 {
-	int	value;
+	int	i;
 
-	if (!is_integer(argv))
-		return (-1);
-	value = ft_atoi(argv);
-	if (value <= 0)
-		return (-1);
-	return (value);
-}
-
-void	parse_input(t_simulation *sim, int argc, char **argv)
-{
-	sim->params = (t_params *)malloc(sizeof(t_params));
-	if (!sim->params)
+	i = 0;
+	if (str[i] == '-' || str[i] == '+')
+		i++;
+	if (str[i] == '\0')
+		return (0);
+	while (str[i])
 	{
-		error_msg("Failed to allocate memory for params.", sim);
-		exit(EXIT_FAILURE);
+		if (str[i] < '0' || str[i] > '9')
+			return (0);
+		i++;
 	}
-	init_args(sim, argc, argv);
+	return (1);
 }
 
-void	init_args(t_simulation *sim, int argc, char **argv)
+int	parse_args(int argc, char **argv, t_params *params)
 {
-	sim->params->philo_count = parse_args(argv[1]);
-	sim->params->time_to_die = parse_args(argv[2]);
-	sim->params->time_to_eat = parse_args(argv[3]);
-	sim->params->time_to_sleep = parse_args(argv[4]);
+	if (argc < 5 || argc > 6)
+		error_msg("Usage: Nb of philo, Time to die, Time to eat, "
+					"Time to sleep [Meals count]");
+	if (!is_valid_int(argv[1]) || !is_valid_int(argv[2])
+		|| is_valid_int(argv[3]) || !is_valid_int(argv[4]))
+		error_msg("Arguments must be valid positive integers.\n");
+	params->philo_count = ft_atoi(argv[1]);
+	params->time_to_die = ft_atoi(argv[2]);
+	params->time_to_eat = ft_atoi(argv[3]);
+	params->time_to_sleep = ft_atoi(argv[4]);
+	if (params->philo_count <= 0 || params->philo_count > 200
+		|| params->time_to_die < 0 || params->time_to_eat < 0
+		|| params->time_to_sleep < 0)
+		error_msg("All values must be positive integers greater than 0\n");
 	if (argc == 6)
-		sim->params->meals_count = parse_args(argv[5]);
-	else
-		sim->params->meals_count = -1;
-	if (sim->params->philo_count <= 0 || sim->params->time_to_die <= 0
-		|| sim->params->time_to_eat <= 0 || sim->params->time_to_sleep <= 0)
 	{
-		error_msg("Invalid arguments", sim);
-		exit(EXIT_FAILURE);
+		if (!is_valid_int(argv[5]))
+			error_msg("Meals count must be a valid integer.\n");
+		params->meals_count = ft_atoi(argv[5]);
 	}
-	if (sim->params->philo_count <= 0)
-		error_msg("Error: Invalid philo count", sim);
+	else
+		params->meals_count = -1;
+	if (params->meals_count < -1)
+		error_msg("Meals count must be a positive integer or -1\n");
+	return (0);
 }

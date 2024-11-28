@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:44 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/11/26 14:00:33 by jbanchon         ###   ########.fr       */
+/*   Updated: 2024/11/28 11:13:14 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,14 @@ int	is_digit(const char c)
 	return (c >= '0' && c <= '9');
 }
 
-long	get_current_time(void)
+int	get_current_time(useconds_t time)
 {
-	struct timeval	tv;
+	u_int64_t	start;
 
-	gettimeofday(&tv, NULL);
-	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
+	start = get_time();
+	while ((get_time() - start) < time)
+		usleep(time = 10);
+	return (0);
 }
 
 int	is_integer(const char *str)

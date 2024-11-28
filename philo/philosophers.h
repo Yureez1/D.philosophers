@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:47 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/11/26 14:34:06 by jbanchon         ###   ########.fr       */
+/*   Updated: 2024/11/28 09:58:25 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,13 @@
 # include <stdlib.h>
 # include <sys/time.h>
 # include <unistd.h>
+
+typedef enum e_state
+{
+	THINKING,
+	EATING,
+	SLEEPING
+}						t_state;
 
 // Simulation params
 typedef struct s_params
@@ -37,13 +44,16 @@ typedef struct s_philo
 	int					philo_id;
 	int					meals_eaten;
 	long				last_meal_time;
+	pthread_mutex_t		meal_lock;
 	pthread_mutex_t		*right_fork;
 	pthread_mutex_t		*left_fork;
 	t_params			*params;
+	t_state				state;
 }						t_philo;
 
 typedef struct s_simulation
 {
+	int					simulation_stopped;
 	t_params			*params;
 	t_philo				*philo;
 	pthread_mutex_t		*forks;
@@ -75,7 +85,7 @@ long					get_current_time(void);
 void					init_simulation(t_simulation *sim);
 void					init_forks(t_simulation *sim);
 void					init_philo(t_simulation *sim);
-//void					init_params(t_simulation *sim);
+// void					init_params(t_simulation *sim);
 
 /**********
 **ROUTINE**

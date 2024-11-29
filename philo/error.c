@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 13:11:01 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/11/26 14:01:03 by jbanchon         ###   ########.fr       */
+/*   Updated: 2024/11/29 15:49:13 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	cleanup_simulation(t_simulation *sim)
 		pthread_mutex_destroy(&sim->forks[i]);
 		i++;
 	}
-	pthread_mutex_destroy(&sim->print_lock);
+	pthread_mutex_destroy(&sim->philo->print_lock);
 	free(sim->forks);
 	free(sim->philo);
 	free(sim->params);

@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:44 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/11/28 11:13:14 by jbanchon         ###   ########.fr       */
+/*   Updated: 2024/11/29 15:48:43 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,28 +40,37 @@ int	is_digit(const char c)
 	return (c >= '0' && c <= '9');
 }
 
-int	get_current_time(useconds_t time)
+int	get_current_time_ms(void)
 {
-	u_int64_t	start;
+	struct timeval	tv;
 
-	start = get_time();
-	while ((get_time() - start) < time)
-		usleep(time = 10);
-	return (0);
+	gettimeofday(&tv, NULL);
+	return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 }
 
-int	is_integer(const char *str)
+void	print_action(t_philo *philo, const char *action)
+{
+	long	current_time;
+
+	pthread_mutex_lock(&philo->print_lock);
+	current_time = get_current_time_ms();
+	printf("%ld Philosopher %d %s \n", current_time, philo->philo_id,
+		action);
+	pthread_mutex_unlock(&philo->print_lock);
+}
+
+int	is_valid_int(char *str)
 {
 	int	i;
 
 	i = 0;
-	if (!str || !str[i])
-		return (0);
-	if (str[i] == '+' || str[i] == '-')
+	if (str[i] == '-' || str[i] == '+')
 		i++;
+	if (str[i] == '\0')
+		return (0);
 	while (str[i])
 	{
-		if (!is_digit(str[i]))
+		if (str[i] < '0' || str[i] > '9')
 			return (0);
 		i++;
 	}

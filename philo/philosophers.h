@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:47 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/11/28 09:58:25 by jbanchon         ###   ########.fr       */
+/*   Updated: 2024/11/29 16:23:02 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,21 @@
 # include <sys/time.h>
 # include <unistd.h>
 
+typedef struct s_philo	t_philo;
+
 typedef enum e_state
 {
 	THINKING,
 	EATING,
-	SLEEPING
+	SLEEPING,
+	DEAD
 }						t_state;
 
 // Simulation params
 typedef struct s_params
 {
 	int					philo_count;
+	t_philo				*philos;
 	int					time_to_die;
 	int					time_to_eat;
 	int					time_to_sleep;
@@ -38,62 +42,71 @@ typedef struct s_params
 	struct s_simulation	*sim;
 }						t_params;
 
-// Philo struct
-typedef struct s_philo
-{
-	int					philo_id;
-	int					meals_eaten;
-	long				last_meal_time;
-	pthread_mutex_t		meal_lock;
-	pthread_mutex_t		*right_fork;
-	pthread_mutex_t		*left_fork;
-	t_params			*params;
-	t_state				state;
-}						t_philo;
-
 typedef struct s_simulation
 {
 	int					simulation_stopped;
 	t_params			*params;
 	t_philo				*philo;
 	pthread_mutex_t		*forks;
-	pthread_mutex_t		print_lock;
 	long				start_time;
 }						t_simulation;
+
+// Philo struct
+typedef struct s_philo
+{
+	int					philo_id;
+	pthread_mutex_t		meal_lock;
+	pthread_mutex_t		*right_fork;
+	pthread_mutex_t		*left_fork;
+	long				last_meal_time;
+	int					meals_eaten;
+	pthread_mutex_t		print_lock;
+	pthread_t			thread;
+	struct s_simulation	*sim;
+	t_params			*params;
+	t_state				state;
+}						t_philo;
 
 /************
 ***PARSING***
 *************/
 
-void					parse_input(t_simulation *sim, int argc, char **argv);
-int						parse_args(const char *argv);
-int						is_integer(const char *str);
-void					init_args(t_simulation *sim, int argc, char **argv);
+int						parse_args(int argc, char **argv, t_simulation *sim);
 
 /**********
 ***UTILS***
 ***********/
 
-int						ft_atoi(const char *str);
+int						is_valid_int(char *str);
+int						get_current_time_ms(void);
 int						is_digit(const char c);
-long					get_current_time(void);
+int						ft_atoi(const char *str);
+void					print_action(t_philo *philo, const char *action);
 
 /*********
 ***INIT***
 **********/
 
-void					init_simulation(t_simulation *sim);
-void					init_forks(t_simulation *sim);
-void					init_philo(t_simulation *sim);
-// void					init_params(t_simulation *sim);
+int						init_philo(t_simulation *sim);
+int						init_forks(t_simulation *sim);
+int						init_philosophers(t_simulation *sim);
+int						init_mutex(pthread_mutex_t *mutex, char *error_message,
+							t_simulation *sim);
+int						allocate_simulation_ressources(t_simulation *sim);
 
 /**********
 **ROUTINE**
 ***********/
 
+void					take_forks(t_philo *philo);
+void					eat(t_philo *philo);
+void					release_forks(t_philo *philo);
+void					go_to_sleep(t_philo *philo);
+void					think(t_philo *philo);
 void					*philo_routine(void *arg);
-void					philo_sleep_and_think(t_philo *philo);
-void					philo_eat(t_philo *philo);
+int						is_dead(t_philo *philo);
+void					*monitor_routine(void *arg);
+int						start_simulation(t_simulation *sim);
 
 /**********
 ***ERROR***

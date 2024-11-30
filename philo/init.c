@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:50 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/11/29 15:44:24 by jbanchon         ###   ########.fr       */
+/*   Updated: 2024/11/29 16:41:31 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	init_philo(t_simulation *sim)
 	return (0);
 }
 
-static int	allocate_simulation_ressources(t_simulation *sim)
+int	allocate_simulation_ressources(t_simulation *sim)
 {
 	if (!(sim->philo = malloc(sizeof(t_philo) * sim->params->philo_count)))
 		return (error_msg("Memory allocation for philosophers failed\n", sim));
@@ -32,7 +32,7 @@ static int	allocate_simulation_ressources(t_simulation *sim)
 	return (0);
 }
 
-static int	init_forks(t_simulation *sim)
+int	init_forks(t_simulation *sim)
 {
 	int	i;
 
@@ -46,7 +46,7 @@ static int	init_forks(t_simulation *sim)
 	return (0);
 }
 
-static int	init_philosophers(t_simulation *sim)
+int	init_philosophers(t_simulation *sim)
 {
 	int	i;
 
@@ -68,7 +68,7 @@ static int	init_philosophers(t_simulation *sim)
 	return (0);
 }
 
-static int	init_mutex(pthread_mutex_t *mutex, char *error_message,
+int	init_mutex(pthread_mutex_t *mutex, char *error_message,
 		t_simulation *sim)
 {
 	if (pthread_mutex_init(mutex, NULL) != 0)

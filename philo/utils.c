@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:44 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/11/29 15:48:43 by jbanchon         ###   ########.fr       */
+/*   Updated: 2024/11/30 13:38:14 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,11 @@ int	get_current_time_ms(void)
 
 void	print_action(t_philo *philo, const char *action)
 {
-	long	current_time;
+	long	relative_time;
 
 	pthread_mutex_lock(&philo->print_lock);
-	current_time = get_current_time_ms();
-	printf("%ld Philosopher %d %s \n", current_time, philo->philo_id,
+	relative_time = get_current_time_ms() - philo->sim->start_time;
+	printf("%ldms Philosopher %d %s \n", relative_time, philo->philo_id,
 		action);
 	pthread_mutex_unlock(&philo->print_lock);
 }

@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:47 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/11/29 16:23:02 by jbanchon         ###   ########.fr       */
+/*   Updated: 2024/12/10 16:52:22 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,12 +49,14 @@ typedef struct s_simulation
 	t_philo				*philo;
 	pthread_mutex_t		*forks;
 	long				start_time;
+	pthread_mutex_t		*stop_lock;
 }						t_simulation;
 
 // Philo struct
 typedef struct s_philo
 {
 	int					philo_id;
+	pthread_mutex_t		dead_lock;
 	pthread_mutex_t		meal_lock;
 	pthread_mutex_t		*right_fork;
 	pthread_mutex_t		*left_fork;
@@ -72,7 +74,13 @@ typedef struct s_philo
 *************/
 
 int						parse_args(int argc, char **argv, t_simulation *sim);
+void					check_argc(int argc, t_simulation *sim);
+void					init_params(t_simulation *sim, char **argv);
+void					validate_args(t_simulation *sim, char **argv);
+void					handle_optional_arg(int argc, t_simulation *sim,
+							char **argv);
 
+int is_initialized(t_simulation *sim);
 /**********
 ***UTILS***
 ***********/
@@ -108,6 +116,11 @@ int						is_dead(t_philo *philo);
 void					*monitor_routine(void *arg);
 int						start_simulation(t_simulation *sim);
 
+/********
+**LOOP***
+*********/
+
+int all_philo_ate(t_simulation *sim);
 /**********
 ***ERROR***
 ***********/

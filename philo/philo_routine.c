@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/26 14:10:28 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/12/10 16:38:36 by jbanchon         ###   ########.fr       */
+/*   Updated: 2024/12/17 15:51:12 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,9 @@ void	*philo_routine(void *arg)
 	philo = (t_philo *)arg;
 	while (1)
 	{
+		usleep(100);
 		pthread_mutex_lock(philo->sim->stop_lock);
+		printf("Simulation stopped status: %d\n", philo->sim->simulation_stopped);
 		if (philo->sim->simulation_stopped)
 		{
 			pthread_mutex_unlock(philo->sim->stop_lock);
@@ -86,9 +88,14 @@ int	all_philo_ate(t_simulation *sim)
 		return (0);
 	while (i < sim->params->philo_count)
 	{
-		printf("Philo %d has eaten %d meals\n", i, sim->philo[i].meals_eaten);
+		pthread_mutex_lock(&sim->philo[i].meal_lock);
 		if (sim->philo[i].meals_eaten < sim->params->meals_count)
+		{
+			pthread_mutex_unlock(&sim->philo[i].meal_lock);
 			return (0);
+		}
+		pthread_mutex_unlock(&sim->philo[i].meal_lock);
+		i++;
 	}
 	return (1);
 }

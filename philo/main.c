@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 18:32:43 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/12/10 16:57:46 by jbanchon         ###   ########.fr       */
+/*   Updated: 2024/12/17 15:38:41 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,11 +114,5 @@ int is_initialized(t_simulation *sim)
         printf("Invalid simulation times (time to die, eat or sleep).\n");
         return 0;
     }
-
-    if (sim->params->meals_count <= 0) {
-        printf("Invalid meals count.\n");
-        return 0;
-    }
-
     return 1;  // Tout est correctement initialisé
 }

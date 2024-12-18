@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:44 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/12/10 12:55:19 by jbanchon         ###   ########.fr       */
+/*   Updated: 2024/12/18 13:34:08 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	is_digit(const char c)
 	return (c >= '0' && c <= '9');
 }
 
-int	get_current_time_ms(void)
+time_t	get_current_time_ms(void)
 {
 	struct timeval	tv;
 
@@ -50,7 +50,7 @@ int	get_current_time_ms(void)
 
 void	print_action(t_philo *philo, const char *action)
 {
-	long	relative_time;
+	time_t	relative_time;
 
 	pthread_mutex_lock(&philo->print_lock);
 	relative_time = get_current_time_ms() - philo->sim->start_time;

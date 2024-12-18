@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/26 14:10:28 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/12/17 15:51:12 by jbanchon         ###   ########.fr       */
+/*   Updated: 2024/12/18 13:21:07 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	*philo_routine(void *arg)
 	{
 		usleep(100);
 		pthread_mutex_lock(philo->sim->stop_lock);
-		printf("Simulation stopped status: %d\n", philo->sim->simulation_stopped);
+		//printf("Simulation stopped status: %d\n", philo->sim->simulation_stopped);
 		if (philo->sim->simulation_stopped)
 		{
 			pthread_mutex_unlock(philo->sim->stop_lock);

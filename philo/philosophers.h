@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:47 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/12/10 16:52:22 by jbanchon         ###   ########.fr       */
+/*   Updated: 2024/12/18 13:56:06 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ typedef struct s_simulation
 	t_params			*params;
 	t_philo				*philo;
 	pthread_mutex_t		*forks;
-	long				start_time;
+	time_t				start_time;
 	pthread_mutex_t		*stop_lock;
 }						t_simulation;
 
@@ -60,7 +60,7 @@ typedef struct s_philo
 	pthread_mutex_t		meal_lock;
 	pthread_mutex_t		*right_fork;
 	pthread_mutex_t		*left_fork;
-	long				last_meal_time;
+	time_t				last_meal_time;
 	int					meals_eaten;
 	pthread_mutex_t		print_lock;
 	pthread_t			thread;
@@ -80,13 +80,13 @@ void					validate_args(t_simulation *sim, char **argv);
 void					handle_optional_arg(int argc, t_simulation *sim,
 							char **argv);
 
-int is_initialized(t_simulation *sim);
+int						is_initialized(t_simulation *sim);
 /**********
 ***UTILS***
 ***********/
 
 int						is_valid_int(char *str);
-int						get_current_time_ms(void);
+time_t					get_current_time_ms(void);
 int						is_digit(const char c);
 int						ft_atoi(const char *str);
 void					print_action(t_philo *philo, const char *action);
@@ -120,7 +120,7 @@ int						start_simulation(t_simulation *sim);
 **LOOP***
 *********/
 
-int all_philo_ate(t_simulation *sim);
+int						all_philo_ate(t_simulation *sim);
 /**********
 ***ERROR***
 ***********/

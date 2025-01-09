@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/26 14:10:28 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/01/09 15:56:42 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/09 16:36:22 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,25 +55,16 @@ int	is_dead(t_philo *philo)
 void	*monitor_routine(void *arg)
 {
 	t_simulation	*sim;
-	int				i;
 
 	sim = (t_simulation *)arg;
-	while (!sim->simulation_stopped)
+	while(!check_simulation_stopped(sim))
 	{
-		i = 0;
-		while (i < sim->params->philo_count)
+		if(all_philo_ate(sim))
 		{
-			if (is_dead(&sim->philo[i]))
-			{
-				sim->simulation_stopped = 1;
-				break ;
-			}
-			i++;
-		}
-		if (all_philo_ate(sim))
-		{
+			pthread_mutex_lock(sim->stop_lock);
 			sim->simulation_stopped = 1;
-			break ;
+			pthread_mutex_unlock(sim->stop_lock);
+			break;
 		}
 		usleep(1000);
 	}
@@ -83,28 +74,23 @@ void	*monitor_routine(void *arg)
 int	all_philo_ate(t_simulation *sim)
 {
 	int	i;
-	int total;
-
+	int finished;
+	
 	i = 0;
-	total = 0;
-	if (sim->params->meals_count == -1)
-		return (0);
-	while (i < sim->params->philo_count)
+	finished = 1;
+	while(i < sim->params->philo_count)
 	{
 		pthread_mutex_lock(&sim->philo[i].meal_lock);
-		if (sim->philo[i].meals_eaten > sim->params->meals_count)
-			total++;
+		if (sim->params->meals_count == -1 || sim->philo[i].meals_eaten < sim->params->meals_count)
+		{
+			finished = 0;
+			pthread_mutex_unlock(&sim->philo[i].meal_lock);
+			break;
+		}
 		pthread_mutex_unlock(&sim->philo[i].meal_lock);
 		i++;
 	}
-	if (total == sim->params->philo_count)
-	{
-		pthread_mutex_lock(&sim->philo[0].dead_lock);
-		*sim->philo[0].dead = 1;
-		pthread_mutex_unlock(&sim->philo[0].dead_lock);
-		return(0);
-	}
-	return (1);
+	return(finished);
 }
 
 int	start_simulation(t_simulation *sim)
@@ -146,4 +132,14 @@ int	start_simulation(t_simulation *sim)
 		return (1);
 	}
 	return (0);
+}
+
+int check_simulation_stopped(t_simulation *sim)
+{
+	int stopped;
+
+	pthread_mutex_lock(sim->stop_lock);
+	stopped = sim->simulation_stopped;
+	pthread_mutex_unlock(sim->stop_lock);
+	return (stopped);
 }

@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:47 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/01/09 15:47:26 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/09 16:30:55 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,8 @@ void					check_argc(int argc, t_simulation *sim);
 void					init_params(t_simulation *sim, char **argv);
 void					validate_args(t_simulation *sim, char **argv);
 int						is_initialized(t_simulation *sim);
+void					precise_usleep(size_t duration);
+
 /**********
 ***UTILS***
 ***********/
@@ -98,6 +100,7 @@ int						init_philo(t_simulation *sim);
 int						init_philosophers(t_simulation *sim);
 int						allocate_simulation_ressources(t_simulation *sim);
 int						init_forks(t_simulation *sim);
+int check_simulation_stopped(t_simulation *sim);
 
 /**********
 **ROUTINE**

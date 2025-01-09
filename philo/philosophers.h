@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:47 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/12/18 13:56:06 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/09 15:47:26 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,11 @@ typedef enum e_state
 // Simulation params
 typedef struct s_params
 {
-	int					philo_count;
 	t_philo				*philos;
-	int					time_to_die;
-	int					time_to_eat;
-	int					time_to_sleep;
+	int					philo_count;
+	size_t				time_to_die;
+	size_t				time_to_eat;
+	size_t				time_to_sleep;
 	int					meals_count;
 	struct s_simulation	*sim;
 }						t_params;
@@ -48,7 +48,7 @@ typedef struct s_simulation
 	t_params			*params;
 	t_philo				*philo;
 	pthread_mutex_t		*forks;
-	time_t				start_time;
+	size_t				start_time;
 	pthread_mutex_t		*stop_lock;
 }						t_simulation;
 
@@ -56,12 +56,14 @@ typedef struct s_simulation
 typedef struct s_philo
 {
 	int					philo_id;
+	int					eating;
 	pthread_mutex_t		dead_lock;
 	pthread_mutex_t		meal_lock;
 	pthread_mutex_t		*right_fork;
 	pthread_mutex_t		*left_fork;
-	time_t				last_meal_time;
+	size_t				last_meal_time;
 	int					meals_eaten;
+	int					*dead;
 	pthread_mutex_t		print_lock;
 	pthread_t			thread;
 	struct s_simulation	*sim;
@@ -77,9 +79,6 @@ int						parse_args(int argc, char **argv, t_simulation *sim);
 void					check_argc(int argc, t_simulation *sim);
 void					init_params(t_simulation *sim, char **argv);
 void					validate_args(t_simulation *sim, char **argv);
-void					handle_optional_arg(int argc, t_simulation *sim,
-							char **argv);
-
 int						is_initialized(t_simulation *sim);
 /**********
 ***UTILS***
@@ -96,11 +95,9 @@ void					print_action(t_philo *philo, const char *action);
 **********/
 
 int						init_philo(t_simulation *sim);
-int						init_forks(t_simulation *sim);
 int						init_philosophers(t_simulation *sim);
-int						init_mutex(pthread_mutex_t *mutex, char *error_message,
-							t_simulation *sim);
 int						allocate_simulation_ressources(t_simulation *sim);
+int						init_forks(t_simulation *sim);
 
 /**********
 **ROUTINE**

@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:50 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/12/17 15:42:18 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/09 15:43:54 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,41 +35,18 @@ int	allocate_simulation_ressources(t_simulation *sim)
 	return (0);
 }
 
-int	init_forks(t_simulation *sim)
-{
-	int	i;
-
-	i = 0;
-	if (pthread_mutex_init(sim->stop_lock, NULL) != 0)
-		return (error_msg("Failed to initialize stop lock", sim));
-	while (i < sim->params->philo_count)
-	{
-		if (pthread_mutex_init(&sim->forks[i], NULL) != 0)
-		{
-			while(--i >= 0)
-				pthread_mutex_destroy(&sim->forks[i]);
-			pthread_mutex_destroy(sim->stop_lock);
-			return (error_msg("Initialization failed for forks", sim));
-		}
-		i++;
-	}
-	return (0);
-}
-
 int	init_philosophers(t_simulation *sim)
 {
 	int	i;
 
 	i = 0;
 	sim->simulation_stopped = 0;
+	sim->start_time = get_current_time_ms();
 	while (i < sim->params->philo_count)
 	{
-		sim->philo[i].philo_id = i;
+		sim->philo[i].philo_id = i + 1;
 		sim->philo[i].meals_eaten = 0;
 		sim->philo[i].last_meal_time = sim->start_time;
-		if (init_mutex(&sim->philo[i].meal_lock,
-				"Initialization for meal_lock failed\n", sim) != 0)
-			return (1);
 		sim->philo[i].left_fork = &sim->forks[(i + sim->params->philo_count - 1)
 			% sim->params->philo_count];
 		sim->philo[i].right_fork = &sim->forks[i];
@@ -79,9 +56,27 @@ int	init_philosophers(t_simulation *sim)
 	return (0);
 }
 
-int	init_mutex(pthread_mutex_t *mutex, char *error_message, t_simulation *sim)
+int		init_forks(t_simulation *sim)
 {
-	if (pthread_mutex_init(mutex, NULL) != 0)
-		return (error_msg(error_message, sim));
-	return (0);
+	int	i;
+
+	i = 0;
+	while (i < sim->params->philo_count)
+	{
+		pthread_mutex_init(&sim->forks[i], NULL);
+		i++;
+	}
+	return(0);
+}
+
+void	init_params(t_simulation *sim, char **argv)
+{
+	sim->params->philo_count = ft_atoi(argv[1]);
+	sim->params->time_to_die = ft_atoi(argv[2]);
+	sim->params->time_to_eat = ft_atoi(argv[3]);
+	sim->params->time_to_sleep = ft_atoi(argv[4]);
+	if (argv[5] != NULL)
+		sim->params->meals_count = ft_atoi(argv[5]);
+	else
+		sim->params->meals_count = -1;
 }

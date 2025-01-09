@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/26 14:10:28 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/12/18 13:21:07 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/09 15:56:42 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ void	*philo_routine(void *arg)
 			break ;
 		}
 		pthread_mutex_unlock(philo->sim->stop_lock);
-		take_forks(philo);
+		//take_forks(philo);
 		eat(philo);
-		release_forks(philo);
+		//release_forks(philo);
 		go_to_sleep(philo);
 		think(philo);
 	}
@@ -40,6 +40,7 @@ void	*philo_routine(void *arg)
 int	is_dead(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->meal_lock);
+
 	if (get_current_time_ms()
 		- philo->last_meal_time > philo->sim->params->time_to_die)
 	{
@@ -82,20 +83,26 @@ void	*monitor_routine(void *arg)
 int	all_philo_ate(t_simulation *sim)
 {
 	int	i;
+	int total;
 
 	i = 0;
+	total = 0;
 	if (sim->params->meals_count == -1)
 		return (0);
 	while (i < sim->params->philo_count)
 	{
 		pthread_mutex_lock(&sim->philo[i].meal_lock);
-		if (sim->philo[i].meals_eaten < sim->params->meals_count)
-		{
-			pthread_mutex_unlock(&sim->philo[i].meal_lock);
-			return (0);
-		}
+		if (sim->philo[i].meals_eaten > sim->params->meals_count)
+			total++;
 		pthread_mutex_unlock(&sim->philo[i].meal_lock);
 		i++;
+	}
+	if (total == sim->params->philo_count)
+	{
+		pthread_mutex_lock(&sim->philo[0].dead_lock);
+		*sim->philo[0].dead = 1;
+		pthread_mutex_unlock(&sim->philo[0].dead_lock);
+		return(0);
 	}
 	return (1);
 }

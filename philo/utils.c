@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:44 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/01/09 15:50:32 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/14 11:54:37 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,9 +54,7 @@ void	print_action(t_philo *philo, const char *action)
 
 	pthread_mutex_lock(&philo->print_lock);
 	relative_time = get_current_time_ms() - philo->sim->start_time;
-	if (is_dead(philo) == 0)
-		printf("%ld %d %s \n", relative_time, philo->philo_id,
-		action);
+	printf("%ld %d %s \n", relative_time, philo->philo_id, action);
 	pthread_mutex_unlock(&philo->print_lock);
 }
 

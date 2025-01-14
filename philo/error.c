@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 13:11:01 by jbanchon          #+#    #+#             */
-/*   Updated: 2024/11/30 13:12:57 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/14 18:21:26 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,10 @@ void	cleanup_simulation(t_simulation *sim)
 {
 	int	i;
 
-	if (!sim || !sim->params)
+	if (!sim)
 		return ;
 	i = 0;
-	while (i < sim->params->philo_count && sim->forks)
+	while (i < sim->philo_count && sim->forks)
 	{
 		pthread_mutex_destroy(&sim->forks[i]);
 		i++;
@@ -38,6 +38,4 @@ void	cleanup_simulation(t_simulation *sim)
 	sim->forks = NULL;
 	free(sim->philo);
 	sim->philo = NULL;
-	free(sim->params);
-	sim->params = NULL;
 }

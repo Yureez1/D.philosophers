@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:44 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/01/14 11:54:37 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/15 18:17:56 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,25 +35,20 @@ int	ft_atoi(const char *str)
 	return (sign * result);
 }
 
-int	is_digit(const char c)
-{
-	return (c >= '0' && c <= '9');
-}
-
 time_t	get_current_time_ms(void)
 {
 	struct timeval	tv;
 
 	gettimeofday(&tv, NULL);
-	return (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
+	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
 void	print_action(t_philo *philo, const char *action)
 {
 	size_t	relative_time;
 
-	pthread_mutex_lock(&philo->print_lock);
 	relative_time = get_current_time_ms() - philo->sim->start_time;
+	pthread_mutex_lock(&philo->print_lock);
 	printf("%ld %d %s \n", relative_time, philo->philo_id, action);
 	pthread_mutex_unlock(&philo->print_lock);
 }

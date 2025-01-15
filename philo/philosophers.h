@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:47 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/01/14 18:29:23 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/15 18:18:36 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,104 +21,76 @@
 # include <unistd.h>
 
 # define PHILO_MAX 200
-typedef struct s_philo	t_philo;
 
-typedef enum e_state
+typedef enum e_philo_state
 {
 	THINKING,
 	EATING,
 	SLEEPING,
 	DEAD
-}						t_state;
+}					t_philo_state;
 
-typedef struct s_simulation
-{
-	int					simulation_stopped;
-	pthread_mutex_t		*stop_lock;
-	t_philo				*philo;
-	pthread_mutex_t		*forks;
-	int dead;
-	size_t				start_time;
-	int					philo_count;
-	size_t				time_to_die;
-	size_t				time_to_eat;
-	size_t				time_to_sleep;
-	int					meals_count;
-}						t_simulation;
-
-// Philo struct
 typedef struct s_philo
 {
-	int					philo_id;
-	int					meals_eaten;
-	int					eating;
-	size_t				last_meal_time;
-	int					*dead;
-	pthread_mutex_t		print_lock;
-	pthread_mutex_t		dead_lock;
-	pthread_mutex_t		meal_lock;
-	pthread_mutex_t		*right_fork;
-	pthread_mutex_t		*left_fork;
-	pthread_t			thread;
-	t_simulation		*sim;
-}						t_philo;
+	int				id;
+	int				nb_philos;
+	int				meals_eaten;
+	int				meals_count;
 
-/************
-***PARSING***
-*************/
+	size_t			time_to_eat;
+	size_t			time_to_die;
+	size_t			time_to_sleep;
+	size_t			start_time;
+	size_t			last_meal_time;
 
-int						parse_args(int argc, char **argv, t_simulation *sim);
-void					check_argc(int argc, t_simulation *sim);
-void					init_(t_simulation *sim, char **argv);
-void					validate_args(t_simulation *sim, char **argv);
-int						is_initialized(t_simulation *sim);
-void					precise_usleep(size_t duration);
+	pthread_mutex_t	*forks;
+	pthread_mutex_t	print_lock;
+	pthread_mutex_t	meal_lock;
+	pthread_mutex_t	dead_lock;
+	pthread_t		*thread;
 
-/**********
-***UTILS***
-***********/
+	t_philo_state	*state;
+}					t_philo;
 
-int						is_valid_int(char *str);
-time_t					get_current_time_ms(void);
-int						is_digit(const char c);
-int						ft_atoi(const char *str);
-void					print_action(t_philo *philo, const char *action);
+typedef struct s_sim
+{
+	pthread_mutex_t	*forks;
+	int				simulation_end_flag;
+}					t_sim;
 
-/*********
-***INIT***
-**********/
+/*===========ERROR===========*/
 
-int						init_philo(t_simulation *sim);
-int						init_philosophers(t_simulation *sim);
-int						allocate_simulation_ressources(t_simulation *sim);
-int						init_forks(t_simulation *sim);
-int						check_simulation_stopped(t_simulation *sim);
+int					error_msg(const char *msg, t_philo *philo);
+void				destroy(t_philo *philo, t_sim *sim);
 
-/**********
-**ROUTINE**
-***********/
+/*===========INIT===========*/
 
-void					take_forks(t_philo *philo);
-void					eat(t_philo *philo);
-void					release_forks(t_philo *philo);
-void					go_to_sleep(t_philo *philo);
-void					think(t_philo *philo);
-void					*philo_routine(void *arg);
-int						is_dead(t_simulation *sim);
-void					*monitor_routine(void *arg);
-int						start_simulation(t_simulation *sim);
-void					one_philo(t_philo *philo);
+void				init_philo(t_philo *philo);
+void				init_mutexes(t_philo *philo);
+void				init_args(t_philo *philo, char **argv);
 
-/********
-**LOOP***
-*********/
+/*===========PHILO_MOUV===========*/
 
-int						all_philo_ate(t_simulation *sim);
-/**********
-***ERROR***
-***********/
+void				philo_sleep(t_philo *philo);
+void				philo_eat(t_philo *philo);
+void				philo_think(t_philo *philo);
 
-int						error_msg(char *message, t_simulation *sim);
-void					cleanup_simulation(t_simulation *sim);
+/*===========PHILO_ROUTINE===========*/
+
+void				*philosopher_routine(void *arg);
+void				philo_is_dead(t_philo *philo);
+void				has_sim_stopped(t_philo *philo);
+
+/*===========THREADS===========*/
+
+void				start_simulation(t_philo *philo);
+
+/*===========UTILS===========*/
+
+int					ft_atoi(const char *str);
+time_t				get_current_time_ms(void);
+void				print_action(t_philo *philo, const char *action);
+int					is_valid_int(char *str);
+
 
 #endif

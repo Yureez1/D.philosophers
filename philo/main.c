@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 18:32:43 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/01/14 18:31:15 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/15 18:23:10 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,7 @@
 
 int	main(int argc, char **argv)
 {
-    t_simulation *sim;
-    
-	if (parse_args(argc, argv, &sim) != 0)
-		return (1);
-	if (init_philo(&sim) != 0)
-		return (1);
-	is_initialized(&sim);
-	if (start_simulation(&sim) != 0)
-		return (1);
-	cleanup_simulation(&sim);
-	free(sim);
-	return (0);
+	t_philo *philo;
+
+	
 }

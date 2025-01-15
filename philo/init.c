@@ -6,76 +6,85 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:50 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/01/14 18:30:01 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/15 18:21:57 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-int	init_philo(t_simulation *sim)
+void	init(t_philo *philo)
 {
-	if (allocate_simulation_ressources(sim) != 0)
-		return (1);
-	if (init_forks(sim) != 0)
-		return (1);
-	if (init_philosophers(sim) != 0)
-		return (1);
-	return (0);
+	if (!init_mutexes(philo))
+		error_msg("Failed to initialize mutexes", philo);
+	if (!init_philo(philo))
+		error_msg("Failed to initialize philos", philo);
 }
 
-int	allocate_simulation_ressources(t_simulation *sim)
+void	init_args(t_philo *philo, char **argv)
 {
-	/*if (!(sim->  = malloc(sizeof(t_ ))))
-		return (error_msg("Memory allocation for t_  failed\n", sim));*/
-	if (!(sim->philo = malloc(sizeof(t_philo) * sim->philo_count)))
-		return (error_msg("Memory allocation for philosophers failed\n", sim));
-	if (!(sim->forks = malloc(sizeof(pthread_mutex_t) * sim->philo_count)))
-		return (error_msg("Memory allocation for forks failed\n", sim));
-	sim->stop_lock = malloc(sizeof(pthread_mutex_t));
-	if (!sim->stop_lock || pthread_mutex_init(sim->stop_lock, NULL) != 0)
-	{
-		free(sim->stop_lock);
-		return (-1);
-	}
-	return (0);
+	philo->nb_philos = ft_atoi(argv[1]);
+	philo->time_to_die = ft_atoi(argv[2]);
+	philo->time_to_eat = ft_atoi(argv[3]);
+	philo->time_to_sleep = ft_atoi(argv[4]);
+	if (argv[5] != NULL)
+		philo->meals_count = ft_atoi(argv[5]);
+	else
+		philo->meals_count = -1;
+	if (philo->nb_philos <= 0 || philo->time_to_die <= 0
+		|| philo->time_to_eat <= 0 || philo->time_to_sleep <= 0)
+		error_msg("Invalid args", philo);
 }
 
-int	init_philosophers(t_simulation *sim)
+void	init_mutexes(t_philo *philo)
 {
 	int	i;
 
 	i = 0;
-	sim->simulation_stopped = 0;
-	sim->start_time = get_current_time_ms();
-	while (i < sim->philo_count)
+	philo->forks = malloc(sizeof(pthread_mutex_t) * philo->nb_philos);
+	if (!philo->forks)
+		error("Failed to allocate memory for forks mutexes", philo);
+	while (i < philo->nb_philos)
 	{
-		sim->philo[i].philo_id = i + 1;
-		sim->philo[i].meals_eaten = 0;
-		sim->philo[i].last_meal_time = sim->start_time;
-		sim->philo[i].left_fork = &sim->forks[(i + sim->philo_count - 1)
-			% sim->philo_count];
-		sim->philo[i].right_fork = &sim->forks[i];
-		sim->philo[i].sim = sim;
-		// sim->philo[i].dead = malloc(sizeof(int));
-		// *(sim->philo[i].dead) = 0;
-		sim->philo[i].dead = &sim->dead;
-		pthread_mutex_init(&sim->philo->print_lock, NULL);
-		pthread_mutex_init(&sim->philo->dead_lock, NULL);
-		pthread_mutex_init(&sim->philo->meal_lock, NULL);
+		if (pthread_mutex_init(&philo->forks[i], NULL) != 0)
+			error_msg("Failed to initialize fork mutex", philo);
 		i++;
 	}
-	return (0);
+	philo->print_lock = malloc(sizeof(pthread_mutex_t));
+	philo->meal_lock = malloc(sizeof(pthread_mutex_t));
+	philo->dead_lock = malloc(sizeof(pthread_mutex_t));
+	if (!philo->print_lock || !philo->meal_lock || !philo->dead_lock)
+		error_msg("Failed to allocate memory for additionnal mutexes", philo);
+	if (pthread_mutex_init(philo->print_lock, NULL) != 0
+		|| pthread_mutex_init(philo->dead_lock, NULL) != 0
+		|| pthread_mutex_init(philo->meal_lock, NULL) != 0)
+		error_msg("Failed to initialize additionnal mutex", philo);
 }
 
-int	init_forks(t_simulation *sim)
+void	init_philo(t_philo *philo)
 {
-	int	i;
+	t_philo	*philos;
+	int		i;
 
+	philos = malloc(sizeof(t_philo) * nb_philos);
+	if (!philos)
+		error_msg("Failed to allocate memory for philosophers", philo);
 	i = 0;
-	while (i < sim->philo_count)
+	while (i < nb_philos)
 	{
-		pthread_mutex_init(&sim->forks[i], NULL);
+		philos[i].id = i + 1;
+		philos[i].nb_philos = nb_philos;
+		philos[i].meals_eaten = 0;
+		philos[i].meals_count = meals_count;
+		philos[i].time_to_die = time_to_die;
+		philos[i].time_to_eat = time_to_eat;
+		philos[i].time_to_sleep = time_to_sleep;
+		philos[i].start_time = get_current_time_ms();
+		philos[i].last_meal_time = philos[i].start_time;
+		philos[i].forks = sim->forks;
+		philos[i].meal_lock = sim->meal_lock;
+		philos[i].dead_lock = sim->dead_lock;
+		philos[i].meal_lock = sim->meal_lock;
 		i++;
 	}
-	return (0);
+	return (philos);
 }

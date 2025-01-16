@@ -3,7 +3,7 @@ CC = cc
 CFLAGS = -Werror -Wall -Wextra -g3
 HEADER = philosophers.h
 
-SRCS = parsing.c philo_routine.c philo_mouv.c utils.c error.c init.c threads.c main.c
+SRCS = philo_routine.c philo_mouv.c utils.c error.c init.c threads.c main.c
 
 OBJS = $(SRCS:.c=.o)
 

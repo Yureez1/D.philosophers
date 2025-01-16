@@ -6,20 +6,19 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:50 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/01/15 18:21:57 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/16 17:19:57 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-void	init(t_philo *philo)
+/*void	init(t_philo *philo, t_sim *sim)
 {
-	if (!init_mutexes(philo))
+	if (!init_mutexes(philo, sim))
 		error_msg("Failed to initialize mutexes", philo);
-	if (!init_philo(philo))
+	if (!init_philo(philo, sim, philo->forks))
 		error_msg("Failed to initialize philos", philo);
-}
-
+}*/
 void	init_args(t_philo *philo, char **argv)
 {
 	philo->nb_philos = ft_atoi(argv[1]);
@@ -35,56 +34,51 @@ void	init_args(t_philo *philo, char **argv)
 		error_msg("Invalid args", philo);
 }
 
-void	init_mutexes(t_philo *philo)
+int	init_mutexes(t_sim *sim)
+{
+	pthread_mutex_init(&(sim->dead_lock), NULL);
+	pthread_mutex_init(&(sim->meal_lock), NULL);
+	pthread_mutex_init(&(sim->print_lock), NULL);
+	return (0);
+}
+
+int	init_philo(t_philo *philo, t_sim *sim, pthread_mutex_t *forks)
 {
 	int	i;
 
 	i = 0;
-	philo->forks = malloc(sizeof(pthread_mutex_t) * philo->nb_philos);
-	if (!philo->forks)
-		error("Failed to allocate memory for forks mutexes", philo);
 	while (i < philo->nb_philos)
 	{
-		if (pthread_mutex_init(&philo->forks[i], NULL) != 0)
-			error_msg("Failed to initialize fork mutex", philo);
+		philo[i].id = i + 1;
+		philo[i].meals_eaten = 0;
+		philo[i].meals_count = philo->meals_count;
+		philo[i].start_time = get_current_time_ms();
+		philo[i].last_meal_time = philo[i].start_time;
+		philo[i].r_fork = &forks[i];
+		philo[i].l_fork = &forks[(i + 1) % philo->nb_philos];
+		philo[i].meal_lock = sim->meal_lock;
+		philo[i].dead_lock = sim->dead_lock;
+		philo[i].print_lock = sim->print_lock;
+		philo[i].time_to_die = philo->time_to_die;
+		philo[i].time_to_eat = philo->time_to_eat;
+		philo[i].time_to_sleep = philo->time_to_sleep;
+		philo[i].state = SLEEPING;
+		philo[i].sim = sim;
 		i++;
 	}
-	philo->print_lock = malloc(sizeof(pthread_mutex_t));
-	philo->meal_lock = malloc(sizeof(pthread_mutex_t));
-	philo->dead_lock = malloc(sizeof(pthread_mutex_t));
-	if (!philo->print_lock || !philo->meal_lock || !philo->dead_lock)
-		error_msg("Failed to allocate memory for additionnal mutexes", philo);
-	if (pthread_mutex_init(philo->print_lock, NULL) != 0
-		|| pthread_mutex_init(philo->dead_lock, NULL) != 0
-		|| pthread_mutex_init(philo->meal_lock, NULL) != 0)
-		error_msg("Failed to initialize additionnal mutex", philo);
+	return (0);
 }
 
-void	init_philo(t_philo *philo)
+void	init_fork(t_sim *sim)
 {
-	t_philo	*philos;
-	int		i;
+	int	i;
 
-	philos = malloc(sizeof(t_philo) * nb_philos);
-	if (!philos)
-		error_msg("Failed to allocate memory for philosophers", philo);
 	i = 0;
-	while (i < nb_philos)
+	sim->forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t)
+			* sim->philo->nb_philos);
+	while (i < sim->philo->nb_philos)
 	{
-		philos[i].id = i + 1;
-		philos[i].nb_philos = nb_philos;
-		philos[i].meals_eaten = 0;
-		philos[i].meals_count = meals_count;
-		philos[i].time_to_die = time_to_die;
-		philos[i].time_to_eat = time_to_eat;
-		philos[i].time_to_sleep = time_to_sleep;
-		philos[i].start_time = get_current_time_ms();
-		philos[i].last_meal_time = philos[i].start_time;
-		philos[i].forks = sim->forks;
-		philos[i].meal_lock = sim->meal_lock;
-		philos[i].dead_lock = sim->dead_lock;
-		philos[i].meal_lock = sim->meal_lock;
+		pthread_mutex_init(&sim->forks[i], NULL);
 		i++;
 	}
-	return (philos);
 }

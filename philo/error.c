@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 13:11:01 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/01/15 18:15:49 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/16 14:26:05 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,23 +19,21 @@ int	error_msg(const char *msg, t_philo *philo)
 	exit(0);
 }
 
-void	destroy(t_philo *philo, t_sim *sim)
+void	destroy(t_philo *philo)
 {
 	int	i;
 
 	i = 0;
 	while (i < philo->nb_philos)
 	{
-		pthread_mutex_destroy(&philo->forks[i]);
+		if (&(philo->nb_philos) != NULL)
+			pthread_mutex_destroy(&philo->sim->forks[i]);
 		i++;
 	}
-	free(philo->forks);
-	pthread_mutex_destroy(philo->print_lock);
-	free(philo->print_lock);
-	pthread_mutex_destroy(philo->meal_lock);
-	free(philo->meal_lock);
-	pthread_mutex_destroy(philo->dead_lock);
-	free(philo->dead_lock);
+	pthread_mutex_destroy(&philo->print_lock);
+	pthread_mutex_destroy(&philo->meal_lock);
+	pthread_mutex_destroy(&philo->dead_lock);
+	free(philo->sim->forks);
 	free(philo);
-	return (1);
+	return ;
 }

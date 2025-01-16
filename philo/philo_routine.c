@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/26 14:10:28 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/01/15 18:17:32 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/16 17:41:35 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,45 +17,60 @@ void	*philosopher_routine(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
+	if (philo->id % 2 == 0)
+		philo_think(philo);
 	while (1)
 	{
-		philo_is_dead(philo);
-		if (philo->state == DEAD)
+		if (philo->meals_count == philo->meals_eaten)
+		{
+			philo->sim->simulation_end_flag = 1;
 			break ;
-		philo_eat(philo);
-		philo_think(philo);
-		philo_sleep(philo);
+		}
+		if (philo->state == DEAD || philo->sim->simulation_end_flag)
+		{
+			philo_is_dead(philo);
+			break ;
+		}
+        philo_eat(philo);
+        philo_think(philo);
+        philo_sleep(philo);
 	}
 	return (NULL);
 }
 
 void	philo_is_dead(t_philo *philo)
 {
-	if (get_current_time_ms() - philo->last_meal_time >= philo->time_to_die)
-	{
-		philo->state = DEAD;
-		print_action("has died", philo->id);
-	}
+	print_action(philo, "has died");
+	pthread_mutex_lock(&philo->dead_lock);
+	philo->state = DEAD;
+	pthread_mutex_unlock(&philo->dead_lock);
 }
 
 void	has_sim_stopped(t_philo *philo)
 {
 	int	i;
-	int	is_dead;
+	int	all_dead;
+	int	all_meals_eaten;
 
 	i = 0;
-	is_dead = 1;
-	while (i < nb_philos)
+	all_dead = 1;
+	all_meals_eaten = 1;
+	while (i < philo->nb_philos)
 	{
-		if (philos[i].state != DEAD)
+		if (philo[i].state != DEAD)
 		{
-			is_dead = 0;
+			all_dead = 0;
 			break ;
 		}
+		if (philo->meals_count != -1
+			&& philo[i].meals_eaten < philo[i].meals_count)
+		{
+			all_meals_eaten = 0;
+			break ;
+		}
+		i++;
 	}
-	if (is_dead)
-	{
-		return (1);
-	}
-	return (0);
+	if (all_dead || all_meals_eaten)
+		philo->sim->simulation_end_flag = 1;
+	return ;
 }

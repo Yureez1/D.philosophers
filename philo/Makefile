@@ -1,31 +1,34 @@
 NAME = philo
 CC = cc
-CFLAGS = -Werror -Wall -Wextra -g3
+CFLAGS = -Wall -Wextra -Werror -pthread
 HEADER = philosophers.h
 
-SRCS = philo_routine.c philo_mouv.c utils.c error.c init.c threads.c main.c
+SRC = main.c \
+	utils.c \
+	init_utils.c \
+	init_philo.c \
+	monitor.c \
+	death.c \
+	simulation.c \
+	cleanup.c \
+	philo_actions.c \
+	philo_checks.c
 
-OBJS = $(SRCS:.c=.o)
+OBJ = $(SRC:.c=.o)
 
 all: $(NAME)
 
-.c.o:
-		@$(CC) $(CFLAGS) -c $< -o $@ -I $(HEADER)
+$(NAME): $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
 
-$(NAME): $(OBJS)
-		@echo "\033[0;32mCompiling philo...\033[0m"
-		@$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
-		@echo "\033[0;32mEverything Compiled\033[0m"
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	@echo "\033[0;32mCleaning Objects files...\033[0m"
-	@rm -f @$(OBJS)
-		@echo "\033[0;32mObjects files cleaned\033[0m"
+	rm -f $(OBJ)
 
 fclean: clean
-	@echo "\033[0;32mFull cleaning...\033[0m"
-	@rm -f $(NAME) $(OBJS)
-		@echo "\033[0;32mEverything cleaned\033[0m"
+	rm -f $(NAME)
 
 re: fclean all
 

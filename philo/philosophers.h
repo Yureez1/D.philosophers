@@ -79,10 +79,21 @@ int						init_mutexes(t_sim *sim);
 void					init_args(t_philo *philo, char **argv);
 void					init_fork(t_sim *sim);
 
-/*===========PHILO_MOUV===========*/
+/*===========MONITOR===========*/
 
-void					philo_sleep(t_philo *philo);
+int						check_death(t_philo *philo, int i);
+void					check_meals(t_philo *philo, int i, int *all_finished);
+int						check_simulation_complete(t_philo *philo, int all_finished);
+void					*monitor_routine(void *arg);
+
+/*===========SIMULATION===========*/
+
+void					start_simulation(t_philo *philo);
+
+/*===========PHILO_ACTIONS===========*/
+
 void					philo_eat(t_philo *philo);
+void					philo_sleep(t_philo *philo);
 void					philo_think(t_philo *philo);
 
 /*===========PHILO_ROUTINE===========*/
@@ -91,15 +102,16 @@ void					*philosopher_routine(void *arg);
 void					philo_is_dead(t_philo *philo);
 void					has_sim_stopped(t_philo *philo);
 
-/*===========THREADS===========*/
+/*===========CLEANUP===========*/
 
-void					start_simulation(t_philo *philo);
+void					destroy(t_philo *philo);
 
 /*===========UTILS===========*/
 
-int						ft_atoi(const char *str);
-time_t					get_current_time_ms(void);
 void					print_action(t_philo *philo, const char *action);
+void					precise_sleep(size_t duration);
+size_t					get_current_time_ms(void);
+int						ft_atoi(const char *str);
 int						is_valid_int(char *str);
 
 #endif

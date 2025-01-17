@@ -19,20 +19,20 @@ int	main(int argc, char **argv)
 
 	(void)argc;
 	sim = (t_sim *)malloc(sizeof(t_sim));
+	if (!sim)
+		return (1);  // Early return if sim allocation fails
 	philo = (t_philo *)malloc(sizeof(t_philo) * ft_atoi(argv[1]));
 	if (!philo)
-		error_msg("Failed to allocate memory for philo", philo);
+	{
+		free(sim);
+		return (1);
+	}
 	sim->philo = philo;
-	if (!sim)
-		error_msg("Failed to allocate memory for sim", philo);
-	if (!philo)
-		error_msg("Failed to allocate memory for simulation", philo);
 	init_args(philo, argv);
 	init_mutexes(sim);
 	init_fork(sim);
 	init_philo(philo, sim, sim->forks);
 	start_simulation(philo);
-	destroy(philo);
-	free(sim);
+	destroy(philo);  // destroy will handle freeing both philo and sim
 	return (0);
 }

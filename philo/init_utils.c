@@ -1,24 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init.c                                             :+:      :+:    :+:   */
+/*   init_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/22 15:03:50 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/01/16 17:19:57 by jbanchon         ###   ########.fr       */
+/*   Created: 2025/01/17 14:21:20 by julien            #+#    #+#             */
+/*   Updated: 2025/01/17 14:21:20 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-/*void	init(t_philo *philo, t_sim *sim)
-{
-	if (!init_mutexes(philo, sim))
-		error_msg("Failed to initialize mutexes", philo);
-	if (!init_philo(philo, sim, philo->forks))
-		error_msg("Failed to initialize philos", philo);
-}*/
 void	init_args(t_philo *philo, char **argv)
 {
 	philo->nb_philos = ft_atoi(argv[1]);
@@ -39,33 +32,6 @@ int	init_mutexes(t_sim *sim)
 	pthread_mutex_init(&(sim->dead_lock), NULL);
 	pthread_mutex_init(&(sim->meal_lock), NULL);
 	pthread_mutex_init(&(sim->print_lock), NULL);
-	return (0);
-}
-
-int	init_philo(t_philo *philo, t_sim *sim, pthread_mutex_t *forks)
-{
-	int	i;
-
-	i = 0;
-	while (i < philo->nb_philos)
-	{
-		philo[i].id = i + 1;
-		philo[i].meals_eaten = 0;
-		philo[i].meals_count = philo->meals_count;
-		philo[i].start_time = get_current_time_ms();
-		philo[i].last_meal_time = philo[i].start_time;
-		philo[i].r_fork = &forks[i];
-		philo[i].l_fork = &forks[(i + 1) % philo->nb_philos];
-		philo[i].meal_lock = sim->meal_lock;
-		philo[i].dead_lock = sim->dead_lock;
-		philo[i].print_lock = sim->print_lock;
-		philo[i].time_to_die = philo->time_to_die;
-		philo[i].time_to_eat = philo->time_to_eat;
-		philo[i].time_to_sleep = philo->time_to_sleep;
-		philo[i].state = SLEEPING;
-		philo[i].sim = sim;
-		i++;
-	}
 	return (0);
 }
 

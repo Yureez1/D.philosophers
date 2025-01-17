@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:44 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/01/16 14:20:39 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/17 14:19:19 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	ft_atoi(const char *str)
 	return (sign * result);
 }
 
-time_t	get_current_time_ms(void)
+size_t	get_current_time_ms(void)
 {
 	struct timeval	tv;
 
@@ -49,9 +49,9 @@ void	print_action(t_philo *philo, const char *action)
 {
 	size_t	relative_time;
 
-	relative_time = get_current_time_ms() - philo->start_time;
 	pthread_mutex_lock(&philo->sim->print_lock);
-	printf("%ld %d %s \n", relative_time, philo->id, action);
+	relative_time = get_current_time_ms() - philo->start_time;
+	printf("%zu %d %s\n", relative_time, philo->id, action);
 	pthread_mutex_unlock(&philo->sim->print_lock);
 }
 
@@ -71,4 +71,24 @@ int	is_valid_int(char *str)
 		i++;
 	}
 	return (1);
+}
+
+void	precise_sleep(size_t sleep_time)
+{
+	size_t	start;
+	size_t	elapsed;
+	size_t	remaining;
+
+	start = get_current_time_ms();
+	while (1)
+	{
+		elapsed = get_current_time_ms() - start;
+		if (elapsed >= sleep_time)
+			break ;
+		remaining = sleep_time - elapsed;
+		if (remaining > 50)
+			usleep(remaining * 900);
+		else
+			usleep(100);
+	}
 }

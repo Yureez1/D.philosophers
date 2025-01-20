@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:47 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/01/16 16:09:13 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/20 12:34:10 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,8 @@ void					init_fork(t_sim *sim);
 
 int						check_death(t_philo *philo, int i);
 void					check_meals(t_philo *philo, int i, int *all_finished);
-int						check_simulation_complete(t_philo *philo, int all_finished);
+int						check_simulation_complete(t_philo *philo,
+							int all_finished);
 void					*monitor_routine(void *arg);
 
 /*===========SIMULATION===========*/

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   death.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 14:21:20 by julien            #+#    #+#             */
-/*   Updated: 2025/01/17 14:21:20 by julien           ###   ########.fr       */
+/*   Updated: 2025/01/20 12:24:59 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,11 @@ void	check_meals(t_philo *philo, int i, int *all_finished)
 	if (philo->meals_count != -1)
 	{
 		if (philo[i].meals_eaten < philo->meals_count)
+		{
+			pthread_mutex_lock(&philo->sim->dead_lock);
 			*all_finished = 0;
+			pthread_mutex_unlock(&philo->sim->dead_lock);
+		}
 	}
 	pthread_mutex_unlock(&philo[i].meal_lock);
 }

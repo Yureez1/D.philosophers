@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 14:21:20 by julien            #+#    #+#             */
-/*   Updated: 2025/01/17 14:21:20 by julien           ###   ########.fr       */
+/*   Updated: 2025/01/20 14:38:06 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,13 @@ void	init_args(t_philo *philo, char **argv)
 	philo->time_to_die = ft_atoi(argv[2]);
 	philo->time_to_eat = ft_atoi(argv[3]);
 	philo->time_to_sleep = ft_atoi(argv[4]);
+	if (philo->nb_philos <= 0 || philo->time_to_die < 0
+		|| philo->time_to_eat < 0 || philo->time_to_sleep < 0)
+		error_msg("Invalid args", philo);
 	if (argv[5] != NULL)
 		philo->meals_count = ft_atoi(argv[5]);
 	else
 		philo->meals_count = -1;
-	if (philo->nb_philos <= 0 || philo->time_to_die <= 0
-		|| philo->time_to_eat <= 0 || philo->time_to_sleep <= 0)
-		error_msg("Invalid args", philo);
 }
 
 int	init_mutexes(t_sim *sim)

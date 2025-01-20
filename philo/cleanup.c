@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cleanup.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 14:21:20 by julien            #+#    #+#             */
-/*   Updated: 2025/01/17 14:21:20 by julien           ###   ########.fr       */
+/*   Updated: 2025/01/20 18:11:26 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ static void	destroy_forks(t_sim *sim)
 			i++;
 		}
 		free(sim->forks);
+		sim->forks = NULL;
 	}
 }
 
@@ -57,6 +58,8 @@ void	destroy(t_philo *philo)
 	}
 	destroy_forks(sim);
 	destroy_mutexes(sim);
-	free(sim->philo);
+	free(philo);
 	free(sim);
+	philo = NULL;
+	sim = NULL;
 }

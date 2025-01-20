@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 14:21:20 by julien            #+#    #+#             */
-/*   Updated: 2025/01/20 12:32:27 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/20 17:53:05 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,10 @@ static void	join_threads(t_philo *philo, pthread_t monitor)
 	if (pthread_join(monitor, NULL) != 0)
 		error_msg("Failed to join monitor thread", philo);
 	pthread_mutex_lock(&philo->sim->dead_lock);
-	// philo->sim->simulation_end_flag = 1;
 	if (philo->sim->simulation_end_flag == 1)
 		return ;
 	pthread_mutex_unlock(&philo->sim->dead_lock);
-	precise_sleep(50);
+	//precise_sleep(50);
 	i = 0;
 	while (i < philo->nb_philos)
 	{

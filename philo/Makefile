@@ -14,21 +14,26 @@ SRC = main.c \
 	philo_actions.c \
 	philo_checks.c
 
-OBJ = $(SRC:.c=.o)
+OBJ = $(addprefix $(OBJDIR)/, $(SRC:.c=.o))
+OBJDIR = obj
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+	@echo "\033[34mPHILO COMPILED\033[0m"
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+$(OBJDIR)/%.o: %.c
+	@mkdir -p $(OBJDIR)
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJ)
+	@rm -rf $(OBJDIR)
+	@echo "\033[34mCLEANING OBJ DIRECTORY\033[0m"
 
 fclean: clean
-	rm -f $(NAME)
+	@rm -f $(NAME)
+	@echo "\033[34mCLEANING PHILO\033[0m"
 
 re: fclean all
 

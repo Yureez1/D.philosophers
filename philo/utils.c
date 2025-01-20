@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:44 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/01/17 14:19:19 by julien           ###   ########.fr       */
+/*   Updated: 2025/01/20 17:23:44 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,13 @@ int	ft_atoi(const char *str)
 	sign = 1;
 	result = 0;
 	if (str == NULL)
-		return (0);
+		error_msg("NULL argument", NULL);
 	while ((*str >= 9 && *str <= 13) || (*str == 32))
 		str++;
 	if (*str == '-' || *str == '+')
 	{
 		if (*str == '-')
-			sign *= -1;
+			error_msg("Negative number not allowed", NULL);
 		str++;
 	}
 	while (*str >= '0' && *str <= '9')

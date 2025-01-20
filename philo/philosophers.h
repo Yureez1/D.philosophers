@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:47 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/01/20 12:34:10 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/20 17:45:55 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,10 +102,6 @@ void					philo_think(t_philo *philo);
 void					*philosopher_routine(void *arg);
 void					philo_is_dead(t_philo *philo);
 void					has_sim_stopped(t_philo *philo);
-
-/*===========CLEANUP===========*/
-
-void					destroy(t_philo *philo);
 
 /*===========UTILS===========*/
 

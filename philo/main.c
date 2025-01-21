@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/25 18:32:43 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/01/20 17:59:41 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/21 16:54:17 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	main(int argc, char **argv)
 {
 	t_philo	*philo;
 	t_sim	*sim;
-	
+
 	(void)argc;
 	sim = (t_sim *)malloc(sizeof(t_sim));
 	if (!sim)
@@ -28,9 +28,11 @@ int	main(int argc, char **argv)
 		return (1);
 	}
 	sim->philo = philo;
-	init_args(philo, argv);
-	init_mutexes(sim);
-	init_fork(sim);
+	if (init_args(philo, argv) || init_mutexes(sim) || init_fork(sim))
+	{
+		destroy(philo);
+		return (1);
+	}
 	init_philo(philo, sim, sim->forks);
 	start_simulation(philo);
 	destroy(philo);

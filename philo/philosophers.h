@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:47 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/01/20 17:45:55 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/21 16:00:36 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,14 +70,16 @@ typedef struct s_sim
 
 int						error_msg(const char *msg, t_philo *philo);
 void					destroy(t_philo *philo);
+void					destroy_mutexes(t_sim *sim);
+void					destroy_forks(t_sim *sim);
 
 /*===========INIT===========*/
 
 int						init_philo(t_philo *philo, t_sim *sim,
 							pthread_mutex_t *forks);
 int						init_mutexes(t_sim *sim);
-void					init_args(t_philo *philo, char **argv);
-void					init_fork(t_sim *sim);
+int						init_args(t_philo *philo, char **argv);
+int						init_fork(t_sim *sim);
 
 /*===========MONITOR===========*/
 

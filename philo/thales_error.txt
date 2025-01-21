@@ -29,4 +29,4 @@
 
                 [============[ Error on Threads Creation ]==============]
 
-[+] Test #38 Threads are not protected during initialization agaisn't insufficient memory.  
+[+] Test #38 Threads are not protected during initialization agaisn't insufficient memory. 

@@ -14,8 +14,8 @@
 
 int	ft_atoi(const char *str)
 {
-	int	result;
-	int	sign;
+	long	result;
+	int		sign;
 
 	sign = 1;
 	result = 0;
@@ -32,9 +32,11 @@ int	ft_atoi(const char *str)
 	while (*str >= '0' && *str <= '9')
 	{
 		result = result * 10 + (*str - '0');
+		if (result > INT_MAX)
+			error_msg("Number too large", NULL);
 		str++;
 	}
-	return (sign * result);
+	return ((int)(sign * result));
 }
 
 size_t	get_current_time_ms(void)

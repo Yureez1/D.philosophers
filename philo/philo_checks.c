@@ -51,7 +51,11 @@ void	*philosopher_routine(void *arg)
 		if (check_meals_complete(philo) || check_simulation_end(philo))
 			return (NULL);
 		philo_sleep(philo);
+		if (check_meals_complete(philo) || check_simulation_end(philo))
+			return (NULL);
 		philo_think(philo);
+		if (check_meals_complete(philo) || check_simulation_end(philo))
+			return (NULL);
 	}
 	return (NULL);
 }

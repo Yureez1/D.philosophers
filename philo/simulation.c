@@ -28,23 +28,41 @@ static void	init_simulation(t_philo *philo)
 	}
 }
 
-static void	create_threads(t_philo *philo, pthread_t *monitor)
+static void	cleanup_threads(t_philo *philo, int last_created)
+{
+	int	i;
+
+	i = 0;
+	while (i < last_created)
+	{
+		pthread_join(philo[i].thread, NULL);
+		i++;
+	}
+}
+
+static int	create_threads(t_philo *philo, pthread_t *monitor)
 {
 	int	i;
 
 	if (pthread_create(monitor, NULL, monitor_routine, philo) != 0)
 	{
 		error_msg("Failed to create monitor thread", philo);
-		return ;
+		return (0);
 	}
 	i = 0;
 	while (i < philo->nb_philos)
 	{
 		if (pthread_create(&philo[i].thread, NULL, philosopher_routine,
 				&philo[i]) != 0)
+		{
 			error_msg("Failed to create philosopher thread", philo);
+			pthread_join(*monitor, NULL);
+			cleanup_threads(philo, i);
+			return (0);
+		}
 		i++;
 	}
+	return (1);
 }
 
 static void	join_threads(t_philo *philo, pthread_t monitor)
@@ -53,10 +71,6 @@ static void	join_threads(t_philo *philo, pthread_t monitor)
 
 	if (pthread_join(monitor, NULL) != 0)
 		error_msg("Failed to join monitor thread", philo);
-	pthread_mutex_lock(&philo->sim->dead_lock);
-	if (philo->sim->simulation_end_flag == 1)
-		return ;
-	pthread_mutex_unlock(&philo->sim->dead_lock);
 	i = 0;
 	while (i < philo->nb_philos)
 	{
@@ -71,6 +85,7 @@ void	start_simulation(t_philo *philo)
 	pthread_t	monitor;
 
 	init_simulation(philo);
-	create_threads(philo, &monitor);
+	if (!create_threads(philo, &monitor))
+		return;
 	join_threads(philo, monitor);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cleanup.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 14:21:20 by julien            #+#    #+#             */
-/*   Updated: 2025/01/21 16:54:23 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/21 22:42:56 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,16 +17,15 @@ int	error_msg(const char *msg, t_philo *philo)
 	printf("Error: %s\n", msg);
 	if (philo)
 		destroy(philo);
-	exit(1);
+	return (1);
 }
 
 void	destroy_forks(t_sim *sim)
 {
 	int	i;
 
-	if (sim->forks)
+	if (sim && sim->forks)
 	{
-		printf("Destroying forks...\n");
 		i = 0;
 		while (i < sim->philo->nb_philos)
 		{
@@ -35,30 +34,25 @@ void	destroy_forks(t_sim *sim)
 		}
 		free(sim->forks);
 		sim->forks = NULL;
-		printf("Forks destroyed and memory freed.\n");
 	}
 }
 
 void	destroy_mutexes(t_sim *sim)
 {
-	pthread_mutex_destroy(&sim->print_lock);
-	pthread_mutex_destroy(&sim->meal_lock);
-	pthread_mutex_destroy(&sim->dead_lock);
+	if (sim)
+	{
+		pthread_mutex_destroy(&sim->print_lock);
+		pthread_mutex_destroy(&sim->meal_lock);
+		pthread_mutex_destroy(&sim->dead_lock);
+	}
 }
 
 void	destroy(t_philo *philo)
 {
 	t_sim	*sim;
-	int		i;
 
-	i = 0;
-	while (i < philo->nb_philos)
-	{
-		pthread_join(philo[i].thread, NULL);
-		i++;
-		if (i == philo->nb_philos)
-			break ;
-	}
+	if (!philo)
+		return;
 	sim = philo->sim;
 	if (sim)
 	{

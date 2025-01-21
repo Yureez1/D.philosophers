@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   death.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 14:21:20 by julien            #+#    #+#             */
-/*   Updated: 2025/01/21 16:43:25 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/21 22:42:40 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,6 @@ int	check_death(t_philo *philo, int i)
 			print_action(&philo[i], "has died");
 			pthread_mutex_lock(&philo->sim->dead_lock);
 			philo->sim->simulation_end_flag = 1;
-			printf("Simulation end triggered by philosopher %d\n", i);
-			//printf(philo->sim->simulation_end_flag ? "true\n" : "false\n");
 			pthread_mutex_unlock(&philo->sim->dead_lock);
 			pthread_mutex_unlock(&philo[i].dead_lock);
 			return (1);

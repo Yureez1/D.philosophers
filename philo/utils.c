@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/22 15:03:44 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/01/20 17:23:44 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/22 16:31:40 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,24 +17,41 @@ int	ft_atoi(const char *str)
 	long	result;
 	int		sign;
 
-	sign = 1;
 	result = 0;
-	if (str == NULL)
+	sign = 1;
+	if (!str)
+	{
 		error_msg("NULL argument", NULL);
+		exit(1);
+	}
 	while ((*str >= 9 && *str <= 13) || (*str == 32))
 		str++;
 	if (*str == '-' || *str == '+')
 	{
 		if (*str == '-')
-			error_msg("Negative number not allowed", NULL);
+			sign = -1;
 		str++;
+	}
+	if (!*str)
+	{
+		error_msg("Invalid empty number", NULL);
+		exit(1);
 	}
 	while (*str >= '0' && *str <= '9')
 	{
 		result = result * 10 + (*str - '0');
-		if (result > INT_MAX)
+		if ((sign == 1 && result > INT_MAX) || 
+			(sign == -1 && -result < INT_MIN))
+		{
 			error_msg("Number too large", NULL);
+			exit(1);
+		}
 		str++;
+	}
+	if (*str)
+	{
+		error_msg("Invalid characters in number", NULL);
+		exit(1);
 	}
 	return ((int)(sign * result));
 }
@@ -55,24 +72,6 @@ void	print_action(t_philo *philo, const char *action)
 	relative_time = get_current_time_ms() - philo->start_time;
 	printf("%zu %d %s\n", relative_time, philo->id, action);
 	pthread_mutex_unlock(&philo->sim->print_lock);
-}
-
-int	is_valid_int(char *str)
-{
-	int	i;
-
-	i = 0;
-	if (str[i] == '-' || str[i] == '+')
-		i++;
-	if (str[i] == '\0')
-		return (0);
-	while (str[i])
-	{
-		if (str[i] < '0' || str[i] > '9')
-			return (0);
-		i++;
-	}
-	return (1);
 }
 
 void	precise_sleep(size_t sleep_time)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   simulation.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/17 14:21:20 by julien            #+#    #+#             */
-/*   Updated: 2025/01/21 16:15:34 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/01/22 16:35:03 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,6 @@ void	start_simulation(t_philo *philo)
 
 	init_simulation(philo);
 	if (!create_threads(philo, &monitor))
-		return;
+		return ;
 	join_threads(philo, monitor);
 }

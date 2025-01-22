@@ -12,7 +12,7 @@
 
 #include "philosophers.h"
 
-/*static int	check_monitor_end(t_philo *philo)
+static int	check_simulation_end(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->sim->dead_lock);
 	if (philo->sim->simulation_end_flag)
@@ -22,7 +22,7 @@
 	}
 	pthread_mutex_unlock(&philo->sim->dead_lock);
 	return (0);
-}*/
+}
 
 static int	monitor_philosophers(t_philo *philo, int *all_finished)
 {
@@ -33,7 +33,8 @@ static int	monitor_philosophers(t_philo *philo, int *all_finished)
 	{
 		if (check_death(philo, i))
 			return (1);
-		check_meals(philo, i, all_finished);
+		if (!check_simulation_end(philo))  
+			check_meals(philo, i, all_finished);
 		i++;
 	}
 	return (0);
@@ -49,7 +50,10 @@ void	*monitor_routine(void *arg)
 	{
 		all_finished = 1;
 		if (monitor_philosophers(philo, &all_finished))
+		{
+			precise_sleep(1);  
 			return (NULL);
+		}
 		if (philo->meals_count != -1 && all_finished)
 		{
 			pthread_mutex_lock(&philo->sim->dead_lock);

@@ -63,15 +63,18 @@ static void	start_eating(t_philo *philo)
 
 	if (check_simulation_end(philo))
 		return;
-	start_time = get_current_time_ms();
 	pthread_mutex_lock(&philo->dead_lock);
+	start_time = get_current_time_ms();
 	philo->last_meal_time = start_time;
 	pthread_mutex_unlock(&philo->dead_lock);
+
 	pthread_mutex_lock(&philo->meal_lock);
 	philo->state = EATING;
+	philo->meals_eaten++;
+	pthread_mutex_unlock(&philo->meal_lock);
+
 	if (!check_simulation_end(philo))
 		print_action(philo, "is eating");
-	pthread_mutex_unlock(&philo->meal_lock);
 }
 
 void	philo_eat(t_philo *philo)
@@ -84,9 +87,6 @@ void	philo_eat(t_philo *philo)
 	start_eating(philo);
 	if (!check_simulation_end(philo))
 		precise_sleep(philo->time_to_eat);
-	pthread_mutex_lock(&philo->meal_lock);
-	philo->meals_eaten++;
-	pthread_mutex_unlock(&philo->meal_lock);
 	pthread_mutex_unlock(philo->r_fork);
 	pthread_mutex_unlock(philo->l_fork);
 }
@@ -97,9 +97,9 @@ void	philo_sleep(t_philo *philo)
 		return;
 	pthread_mutex_lock(&philo->meal_lock);
 	philo->state = SLEEPING;
+	pthread_mutex_unlock(&philo->meal_lock);
 	if (!check_simulation_end(philo))
 		print_action(philo, "is sleeping");
-	pthread_mutex_unlock(&philo->meal_lock);
 	if (!check_simulation_end(philo))
 		precise_sleep(philo->time_to_sleep);
 }
@@ -110,7 +110,7 @@ void	philo_think(t_philo *philo)
 		return;
 	pthread_mutex_lock(&philo->meal_lock);
 	philo->state = THINKING;
+	pthread_mutex_unlock(&philo->meal_lock);
 	if (!check_simulation_end(philo))
 		print_action(philo, "is thinking");
-	pthread_mutex_unlock(&philo->meal_lock);
 }

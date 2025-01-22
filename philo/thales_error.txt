@@ -1,32 +1,16 @@
-                [============[ Testing Invalid Arguments ]==============]
+[~] Test #32 Program output with 5 600 200 200 -5:
+ timeout: the monitored command dumped core 
 
-[+] Test #28 Program output an error message with -5 600 200 200 5
-
-[+] Test #29 Program output an error message with 5 -5 200 200 5
-
-[+] Test #30 Program output an error message with 5 600 -5 200 5
-
-[+] Test #31 Program output an error message with 5 600 200 -5 5
-
-[+] Test #32 Program output an error message with 5 600 200 200 -5
-
-[~] Test #33 Program output multiple lines with 5 2147483649 200 200 5, you should decide if this case is handled well. Here are the last 2 lines:
- 2600 2 has taken a fork
-2600 2 is eating 
-
-[~] Test #34 Program output multiple lines with 5 200 2147483649 200 5, you should decide if this case is handled well. Here are the last 2 lines:
- 0 3 is eating
-201 1 has died 
-
-[+] Test #35 Program ran successfully without errors or output with 2147483649 200 200 200 5
-
-[+] Test #36 Program ran successfully without errors or output with 5 200 200 200 2147483649
-
-[~] Test #37 Program output multiple lines with 5 200 200 2147483649 5, you should decide if this case is handled well. Here are the last 2 lines:
- 200 5 has taken a fork
-201 1 has died 
+ [~] Test #29 Program output multiple lines with 5 -5 200 200 5, you should decide if this case is handled well. Here are the last 2 lines:
+ 2400 4 is eating
+2400 5 has taken a fork 
 
 
-                [============[ Error on Threads Creation ]==============]
+[+] Test #23 Testing philo with 3 610 200 80
+[1...] 1sec - still alive 
+[2...][+] Test #23 Failed with 3 610 200 80, the philosopher should stay alive for at least 40 seconds
 
-[+] Test #38 Threads are not protected during initialization agaisn't insufficient memory. 
+
+[+] Test #24 Testing philo with 3 610 200 200
+[1...] 1sec - still alive 
+[2...][+] Test #24 Failed with 3 610 200 200, the philosopher should stay alive for at least 40 seconds

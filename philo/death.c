@@ -22,10 +22,10 @@ int	check_death(t_philo *philo, int i)
 	{
 		if (current_time - philo[i].last_meal_time > philo[i].time_to_die)
 		{
-			print_action(&philo[i], "has died");
 			pthread_mutex_lock(&philo->sim->dead_lock);
 			philo->sim->simulation_end_flag = 1;
 			pthread_mutex_unlock(&philo->sim->dead_lock);
+			print_action(&philo[i], "has died");
 			pthread_mutex_unlock(&philo[i].dead_lock);
 			return (1);
 		}

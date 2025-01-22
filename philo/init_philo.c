@@ -42,6 +42,7 @@ int	init_philo(t_philo *philo, t_sim *sim, pthread_mutex_t *forks)
 	while (i < philo->nb_philos)
 	{
 		philo[i].id = i + 1;
+		philo[i].nb_philos = philo->nb_philos;
 		philo[i].meals_eaten = 0;
 		philo[i].meals_count = philo->meals_count;
 		init_philo_timings(philo, i);

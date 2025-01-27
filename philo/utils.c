@@ -5,26 +5,37 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/22 15:03:44 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/01/22 16:31:40 by julien           ###   ########.fr       */
+/*   Created: 2025/01/24 12:20:34 by julien            #+#    #+#             */
+/*   Updated: 2025/01/27 11:11:01 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philosophers.h"
+#include "philo.h"
 
-int	ft_atoi(const char *str)
+int	ft_strcnmp(char *s1, char *s2, int n)
 {
-	long	result;
-	int		sign;
+	int	i;
 
-	result = 0;
-	sign = 1;
-	if (!str)
+	i = 0;
+	if (n == 0)
+		return (0);
+	while ((s1[i] != '\0' || s2[i] != '\0') && i < n)
 	{
-		error_msg("NULL argument", NULL);
-		exit(1);
+		if (s1[i] != s2[i])
+			return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+		i++;
 	}
-	while ((*str >= 9 && *str <= 13) || (*str == 32))
+	return (0);
+}
+
+int	ft_atoi(char *str)
+{
+	long long	res;
+	int			sign;
+
+	res = 0;
+	sign = 1;
+	while (*str == ' ' || (*str >= 9 && *str <= 13))
 		str++;
 	if (*str == '-' || *str == '+')
 	{
@@ -32,64 +43,55 @@ int	ft_atoi(const char *str)
 			sign = -1;
 		str++;
 	}
-	if (!*str)
-	{
-		error_msg("Invalid empty number", NULL);
-		exit(1);
-	}
 	while (*str >= '0' && *str <= '9')
 	{
-		result = result * 10 + (*str - '0');
-		if ((sign == 1 && result > INT_MAX) || 
-			(sign == -1 && -result < INT_MIN))
-		{
-			error_msg("Number too large", NULL);
-			exit(1);
-		}
+		res = res * 10 + (*str - '0');
 		str++;
 	}
-	if (*str)
+	if (res > 9223372036854775807 && sign == -1)
+		return (-1);
+	else if (res > 9223372036854775807)
+		return (0);
+	return (res * sign);
+}
+
+long long	get_time(void)
+{
+	struct timeval	time;
+
+	if (gettimeofday(&time, NULL) == -1)
+		return (-1);
+	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+}
+
+void	philo_wait(long long usec, t_simulation *sim)
+{
+	long long	start_time;
+	long long	current_time;
+
+	start_time = get_time();
+	while (!check_sim_end(sim))
 	{
-		error_msg("Invalid characters in number", NULL);
-		exit(1);
-	}
-	return ((int)(sign * result));
-}
-
-size_t	get_current_time_ms(void)
-{
-	struct timeval	tv;
-
-	gettimeofday(&tv, NULL);
-	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
-}
-
-void	print_action(t_philo *philo, const char *action)
-{
-	size_t	relative_time;
-
-	pthread_mutex_lock(&philo->sim->print_lock);
-	relative_time = get_current_time_ms() - philo->start_time;
-	printf("%zu %d %s\n", relative_time, philo->id, action);
-	pthread_mutex_unlock(&philo->sim->print_lock);
-}
-
-void	precise_sleep(size_t sleep_time)
-{
-	size_t	start;
-	size_t	elapsed;
-	size_t	remaining;
-
-	start = get_current_time_ms();
-	while (1)
-	{
-		elapsed = get_current_time_ms() - start;
-		if (elapsed >= sleep_time)
+		current_time = get_time();
+		if ((current_time - start_time) >= usec)
 			break ;
-		remaining = sleep_time - elapsed;
-		if (remaining > 50)
-			usleep(remaining * 900);
-		else
-			usleep(100);
+		usleep(100);
 	}
+}
+
+int	print_action(t_simulation *sim, int philo_id, char *action)
+{
+	long long	current_time;
+
+	pthread_mutex_lock(&(sim->print_lock));
+	current_time = get_time();
+	if (current_time < 0)
+		return (-1);
+	if (!check_sim_end(sim))
+		printf("%lld %d %s\n", current_time - sim->sim_start_time, philo_id,
+			action);
+	if (ft_strcnmp(action, "died", 4) == 0)
+		return (0);
+	pthread_mutex_unlock(&(sim->print_lock));
+	return (0);
 }

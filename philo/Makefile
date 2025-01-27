@@ -1,39 +1,33 @@
 NAME = philo
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -pthread -g3 
-HEADER = philosophers.h
+CFLAGS = -Wall -Wextra -Werror
+SRC = main.c utils.c philo.c init.c error.c monitoring.c
 
-SRC = main.c \
-	utils.c \
-	init_utils.c \
-	init_philo.c \
-	monitor.c \
-	death.c \
-	simulation.c \
-	cleanup.c \
-	philo_actions.c \
-	philo_checks.c
+OBJ_DIR = obj
+OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))
 
-OBJ = $(addprefix $(OBJDIR)/, $(SRC:.c=.o))
-OBJDIR = obj
+all: $(OBJ_DIR) $(NAME)
 
-all: $(NAME)
+$(OBJ_DIR):
+	@mkdir -p $(OBJ_DIR)
 
-$(NAME): $(OBJ)
-	@$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
-	@echo "\033[34mPHILO COMPILED\033[0m"
-
-$(OBJDIR)/%.o: %.c
-	@mkdir -p $(OBJDIR)
+$(OBJ_DIR)/%.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 
+$(NAME): $(OBJ)
+	@echo "\033[32mCompiling $(NAME)\033[0m"
+	@$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+	@echo "\033[32m$(NAME) compiled\033[0m"
+
 clean:
-	@rm -rf $(OBJDIR)
-	@echo "\033[34mCLEANING OBJ DIRECTORY\033[0m"
+	@echo "\033[32mCleaning object files\033[0m"
+	@rm -rf $(OBJ_DIR)
+	@echo "\033[32mObject files cleaned\033[0m"
 
 fclean: clean
+	@echo "\033[32mCleaning $(NAME)\033[0m"
 	@rm -f $(NAME)
-	@echo "\033[34mCLEANING PHILO\033[0m"
+	@echo "\033[32m$(NAME) cleaned\033[0m"
 
 re: fclean all
 

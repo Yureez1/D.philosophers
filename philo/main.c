@@ -5,38 +5,37 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/25 18:32:43 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/01/21 23:13:00 by julien           ###   ########.fr       */
+/*   Created: 2025/01/25 17:02:30 by julien            #+#    #+#             */
+/*   Updated: 2025/01/26 17:37:27 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philosophers.h"
+#include "philo.h"
 
 int	main(int argc, char **argv)
 {
-	t_philo	*philo;
-	t_sim	*sim;
+	t_simulation	sim;
+	t_philo			*philo;
 
 	if (argc < 5 || argc > 6)
-		return (error_msg("Wrong number of arguments", NULL));
-	sim = (t_sim *)malloc(sizeof(t_sim));
-	if (!sim)
-		return (error_msg("Failed to allocate memory for simulation", NULL));
-	philo = (t_philo *)malloc(sizeof(t_philo) * ft_atoi(argv[1]));
-	if (!philo)
+		return (printf("Invalid number of args\n"), 1);
+	memset(&sim, 0, sizeof(t_simulation));
+	if (init_args(&sim, argc, argv) == 1)
+		return (printf("Failed to initialize arguments\n"), 1);
+	if (init_philo(&philo, &sim) == 1)
 	{
-		free(sim);
-		return (error_msg("Failed to allocate memory for philosophers", NULL));
-	}
-	sim->philo = philo;
-	philo->sim = sim;
-	if (init_args(philo, argv) || init_mutexes(sim) || init_fork(sim))
-	{
-		destroy(philo);
+		printf("Failed to initialize philosophers\n");
+		destroy(&sim);
 		return (1);
 	}
-	init_philo(philo, sim, sim->forks);
-	start_simulation(philo);
-	destroy(philo);
+	if (create_philo_threads(philo, &sim))
+	{
+		printf("Failed to create philosopher threads\n");
+		destroy(&sim);
+		free(philo);
+		return (1);
+	}
+	destroy(&sim);
+	free(philo);
 	return (0);
 }

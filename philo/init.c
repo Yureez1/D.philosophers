@@ -23,7 +23,7 @@ int	init_philo(t_philo **philo, t_simulation *sim)
 	while (i < sim->nb_philo)
 	{
 		(*philo)[i].simulation = sim;
-		(*philo)[i].philo_id = i + 1;
+		(*philo)[i].philo_id = i;
 		(*philo)[i].left_fork = i;
 		if (i == sim->nb_philo - 1)
 			(*philo)[i].right_fork = 0;

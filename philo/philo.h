@@ -6,7 +6,7 @@
 /*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/24 12:13:49 by julien            #+#    #+#             */
-/*   Updated: 2025/01/27 11:09:49 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/23 16:12:15 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,27 +47,27 @@ typedef struct s_philo
 	int				meals_completed;
 }					t_philo;
 
-/*==================================INITIALIZATION================================*/
+/*======INITIALIZATION======*/
 
 int					init_philo(t_philo **philo, t_simulation *sim);
 int					init_args(t_simulation *sim, int argc, char **argv);
 int					init_mutex(t_simulation *sim);
 void				end_mutex(t_simulation *sim);
 
-/*===================================THREADS====================================*/
+/*======THREADS=======*/
 
 int					create_philo_threads(t_philo *philo, t_simulation *sim);
 void				*philo_routine(void *arg);
 void				monitoring(t_simulation *sim, t_philo *philo);
 int					check_sim_end(t_simulation *sim);
 
-/*===================================ACTIONS====================================*/
+/*======ACTIONS======*/
 
 int					philo_eat(t_simulation *sim, t_philo *philo);
 void				philo_think(t_simulation *sim);
 int					print_action(t_simulation *sim, int philo_id, char *action);
 
-/*===================================UTILS=====================================*/
+/*======UTILS======*/
 
 void				philo_wait(long long usec, t_simulation *sim);
 void				handle_eating(t_philo *philo, t_simulation *sim);
@@ -75,7 +75,7 @@ void				ft_usleep(long long ms);
 long long			get_time(void);
 int					ft_atoi(char *str);
 
-/*===================================ERRORS=================================*/
+/*======ERRORS======*/
 
 void				error_msg(char *msg, t_simulation *sim);
 void				destroy(t_simulation *sim);

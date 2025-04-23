@@ -6,7 +6,7 @@
 /*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/24 12:20:34 by julien            #+#    #+#             */
-/*   Updated: 2025/01/27 11:11:01 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/23 16:15:15 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,13 +83,17 @@ int	print_action(t_simulation *sim, int philo_id, char *action)
 {
 	long long	current_time;
 
+	if (check_sim_end(sim) && ft_strcnmp(action, "died", 4) != 0)
+		return (0);
 	pthread_mutex_lock(&(sim->print_lock));
 	current_time = get_time();
 	if (current_time < 0)
+	{
+		pthread_mutex_unlock(&(sim->print_lock));
 		return (-1);
-	if (!check_sim_end(sim))
-		printf("%lld %d %s\n", current_time - sim->sim_start_time, philo_id,
-			action);
+	}
+	printf("%lld %d %s\n", current_time - sim->sim_start_time,
+		philo_id, action);
 	if (ft_strcnmp(action, "died", 4) == 0)
 		return (0);
 	pthread_mutex_unlock(&(sim->print_lock));

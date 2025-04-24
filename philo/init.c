@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/24 12:44:04 by julien            #+#    #+#             */
-/*   Updated: 2025/01/27 10:57:24 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/24 14:15:36 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ int	init_philo(t_philo **philo, t_simulation *sim)
 			(*philo)[i].right_fork = i + 1;
 		(*philo)[i].last_meal_time = get_time();
 		(*philo)[i].meals_completed = 0;
+		(*philo)[i].has_finished = 0;
 		i++;
 	}
 	return (0);
@@ -66,6 +67,9 @@ int	init_args(t_simulation *sim, int argc, char **argv)
 	sim->time_to_eat = ft_atoi(argv[3]);
 	sim->time_to_sleep = ft_atoi(argv[4]);
 	sim->sim_start_time = get_time();
+	sim->total_meals_eaten = 0;
+	sim->sim_end = 0;
+	sim->meals_to_eat = 0;
 	if (sim->nb_philo <= 0 || sim->time_to_die <= 0 || sim->time_to_eat <= 0
 		|| sim->time_to_sleep <= 0)
 		return (1);
@@ -77,15 +81,10 @@ int	init_args(t_simulation *sim, int argc, char **argv)
 		if (sim->nb_philo == 1)
 			sim->meals_to_eat = 0;
 	}
-	if (init_mutex(sim))
-	{
-		free(sim->forks);
-		return (1);
-	}
 	return (0);
 }
 
-int	init_mutex(t_simulation *sim)
+int	init_mutex(t_simulation *sim, t_philo *philo)
 {
 	int	i;
 
@@ -103,7 +102,31 @@ int	init_mutex(t_simulation *sim)
 	{
 		if (pthread_mutex_init(&sim->forks[i], NULL))
 			return (1);
+		if (pthread_mutex_init(&(philo[i].meal_lock), NULL))
+			return (1);
 		i++;
+	}
+	return (0);
+}
+
+int	init_all(t_simulation *sim, t_philo **philo, int argc, char **argv)
+{
+	if (init_args(sim, argc, argv))
+	{
+		printf("Failed to initialize arguments\n");
+		return (1);
+	}
+	if (init_philo(philo, sim))
+	{
+		printf("Failed to initialize philosophers\n");
+		return (1);
+	}
+	sim->philos = *philo;
+	if (init_mutex(sim, *philo))
+	{
+		printf("Failed to initialize mutexes\n");
+		free(*philo);
+		return (1);
 	}
 	return (0);
 }

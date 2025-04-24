@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 17:02:30 by julien            #+#    #+#             */
-/*   Updated: 2025/04/23 16:10:07 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/24 12:24:18 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,9 @@ int	main(int argc, char **argv)
 	if (argc < 5 || argc > 6)
 		return (printf("Invalid number of args\n"), 1);
 	memset(&sim, 0, sizeof(t_simulation));
-	if (init_args(&sim, argc, argv) == 1)
-		return (printf("Failed to initialize arguments\n"), 1);
-	if (init_philo(&philo, &sim) == 1)
+	if (init_all(&sim, &philo, argc, argv))
 	{
-		printf("Failed to initialize philosophers\n");
-		destroy(&sim);
+		printf("Failed to initialize simulation\n");
 		return (1);
 	}
 	if (create_philo_threads(philo, &sim))

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 11:41:22 by julien            #+#    #+#             */
-/*   Updated: 2025/04/23 16:16:18 by julien           ###   ########.fr       */
+/*   Updated: 2025/04/24 14:40:27 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 int	philo_eat(t_simulation *sim, t_philo *philo)
 {
+	if (check_sim_end(sim))
+		return (1);
 	pthread_mutex_lock(&(sim->forks[philo->left_fork]));
 	print_action(sim, philo->philo_id, "has taken a fork");
 	if (sim->nb_philo != 1)
@@ -21,10 +23,10 @@ int	philo_eat(t_simulation *sim, t_philo *philo)
 		pthread_mutex_lock(&(sim->forks[philo->right_fork]));
 		print_action(sim, philo->philo_id, "has taken a fork");
 		print_action(sim, philo->philo_id, "is eating");
-		pthread_mutex_lock(&(sim->time_lock));
+		pthread_mutex_lock(&(philo->meal_lock));
 		philo->last_meal_time = get_time();
-		pthread_mutex_unlock(&(sim->time_lock));
 		philo->meals_completed++;
+		pthread_mutex_unlock(&(philo->meal_lock));
 		philo_wait((long long)sim->time_to_eat, sim);
 		pthread_mutex_unlock(&(sim->forks[philo->right_fork]));
 	}
@@ -46,8 +48,15 @@ void	philo_think(t_simulation *sim)
 
 static void	philo_eat_routine(t_simulation *sim, t_philo *philo)
 {
+	int	is_first_meal;
+
+	if (check_sim_end(sim))
+		return ;
+	pthread_mutex_lock(&philo->meal_lock);
+	is_first_meal = (philo->meals_completed == 0);
+	pthread_mutex_unlock(&philo->meal_lock);
 	if (sim->nb_philo > 1 && philo->philo_id == sim->nb_philo - 1
-		&& philo->meals_completed == 0)
+		&& is_first_meal)
 		usleep(500);
 	if (!check_sim_end(sim))
 		philo_eat(sim, philo);
@@ -57,16 +66,26 @@ static void	philo_eat_routine(t_simulation *sim, t_philo *philo)
 
 static int	philo_actions(t_simulation *sim, t_philo *philo)
 {
-	philo_eat_routine(sim, philo);
-	if (sim->meals_to_eat > 0 && philo->meals_completed >= sim->meals_to_eat)
+	pthread_mutex_lock(&(philo->meal_lock));
+	if (philo->has_finished)
 	{
+		pthread_mutex_unlock(&(philo->meal_lock));
+		return (1);
+	}
+	pthread_mutex_unlock(&(philo->meal_lock));
+	philo_eat_routine(sim, philo);
+	pthread_mutex_lock(&(philo->meal_lock));
+	if (!philo->has_finished && sim->meals_to_eat > 0
+		&& philo->meals_completed >= sim->meals_to_eat)
+	{
+		philo->has_finished = 1;
 		pthread_mutex_lock(&(sim->sim_end_mutex));
 		sim->total_meals_eaten++;
 		if (sim->total_meals_eaten >= sim->nb_philo)
 			sim->sim_end = 1;
 		pthread_mutex_unlock(&(sim->sim_end_mutex));
-		return (1);
 	}
+	pthread_mutex_unlock(&(philo->meal_lock));
 	if (!check_sim_end(sim))
 	{
 		print_action(sim, philo->philo_id, "is sleeping");
@@ -83,7 +102,7 @@ void	*philo_routine(void *arg)
 
 	philo = (t_philo *)arg;
 	sim = philo->simulation;
-	if (philo->philo_id % 2 == 0)
+	if (sim->nb_philo > 1 && philo->philo_id % 2 == 0)
 		philo_think(sim);
 	while (!check_sim_end(sim))
 	{

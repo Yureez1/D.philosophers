@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/24 12:13:49 by julien            #+#    #+#             */
-/*   Updated: 2025/04/24 13:26:07 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/26 15:49:42 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,8 @@ int							check_death_or_done(t_simulation *sim,
 /*======ACTIONS======*/
 
 int							philo_eat(t_simulation *sim, t_philo *philo);
-void						philo_think(t_simulation *sim);
+void						philo_think_and_sleep(t_simulation *sim,
+								t_philo *philo);
 int							print_action(t_simulation *sim, int philo_id,
 								char *action);
 

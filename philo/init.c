@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/24 12:44:04 by julien            #+#    #+#             */
-/*   Updated: 2025/04/24 14:15:36 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/29 14:42:59 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	init_philo(t_philo **philo, t_simulation *sim)
 	while (i < sim->nb_philo)
 	{
 		(*philo)[i].simulation = sim;
-		(*philo)[i].philo_id = i;
+		(*philo)[i].philo_id = i + 1;
 		(*philo)[i].left_fork = i;
 		if (i == sim->nb_philo - 1)
 			(*philo)[i].right_fork = 0;
@@ -70,8 +70,8 @@ int	init_args(t_simulation *sim, int argc, char **argv)
 	sim->total_meals_eaten = 0;
 	sim->sim_end = 0;
 	sim->meals_to_eat = 0;
-	if (sim->nb_philo <= 0 || sim->time_to_die <= 0 || sim->time_to_eat <= 0
-		|| sim->time_to_sleep <= 0)
+	if (sim->nb_philo <= 0 || sim->nb_philo > 200 || sim->time_to_die <= 0
+		|| sim->time_to_eat <= 0 || sim->time_to_sleep <= 0)
 		return (1);
 	if (argc == 6)
 	{

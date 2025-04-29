@@ -79,6 +79,13 @@ void						philo_think_and_sleep(t_simulation *sim,
 int							print_action(t_simulation *sim, int philo_id,
 								char *action);
 
+/*======PHILO_UTILS======*/
+
+int							take_left_fork(t_simulation *sim, t_philo *philo);
+int							take_right_fork(t_simulation *sim, t_philo *philo);
+void						eat_and_release_forks(t_simulation *sim,
+								t_philo *philo);
+
 /*======UTILS======*/
 
 void						philo_wait(long long usec, t_simulation *sim);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/24 12:20:34 by julien            #+#    #+#             */
-/*   Updated: 2025/04/24 13:46:49 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/29 23:09:10 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,26 +64,15 @@ long long	get_time(void)
 	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
 }
 
-void	philo_wait(long long usec, t_simulation *sim)
-{
-	long long	start_time;
-	long long	current_time;
-
-	start_time = get_time();
-	while (!check_sim_end(sim))
-	{
-		current_time = get_time();
-		if ((current_time - start_time) >= usec)
-			break ;
-		usleep(100);
-	}
-}
-
 int	print_action(t_simulation *sim, int philo_id, char *action)
 {
 	long long	current_time;
+	int			sim_ended;
 
-	if (check_sim_end(sim) && ft_strcnmp(action, "died", 4) != 0)
+	pthread_mutex_lock(&(sim->sim_end_mutex));
+	sim_ended = sim->sim_end;
+	pthread_mutex_unlock(&(sim->sim_end_mutex));
+	if (sim_ended && ft_strcnmp(action, "died", 4) != 0)
 		return (0);
 	pthread_mutex_lock(&(sim->print_lock));
 	current_time = get_time();
@@ -92,8 +81,21 @@ int	print_action(t_simulation *sim, int philo_id, char *action)
 		pthread_mutex_unlock(&(sim->print_lock));
 		return (-1);
 	}
-	printf("%lld %d %s\n", current_time - sim->sim_start_time,
-		philo_id, action);
+	pthread_mutex_lock(&(sim->sim_end_mutex));
+	sim_ended = sim->sim_end;
+	pthread_mutex_unlock(&(sim->sim_end_mutex));
+	if (!sim_ended || ft_strcnmp(action, "died", 4) == 0)
+		printf("%lld %d %s\n", current_time - sim->sim_start_time, philo_id,
+			action);
 	pthread_mutex_unlock(&(sim->print_lock));
 	return (0);
+}
+
+void	ft_usleep(long long ms)
+{
+	long long	time;
+
+	time = get_time();
+	while (get_time() - time < ms)
+		usleep(ms / 10);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 17:02:30 by julien            #+#    #+#             */
-/*   Updated: 2025/04/29 14:46:14 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/04/29 23:19:31 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,6 @@ int	main(int argc, char **argv)
 		destroy(&sim);
 		free(philo);
 		return (1);
-	}
-	for (int i = 0; i < sim.nb_philo; i++)
-	{
-		printf("Philosopher %d ate %d times\n", philo[i].philo_id,
-			philo[i].meals_completed);
 	}
 	destroy(&sim);
 	free(philo);

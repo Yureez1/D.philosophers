@@ -1,7 +1,7 @@
 NAME = philo
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
-SRC = main.c utils.c philo.c init.c error.c monitoring.c
+SRC = main.c utils.c philo.c init.c error.c monitoring.c philo_utils.c monitoring_utils.c
 
 OBJ_DIR = obj
 OBJ = $(addprefix $(OBJ_DIR)/, $(SRC:.c=.o))

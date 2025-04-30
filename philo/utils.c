@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/24 12:20:34 by julien            #+#    #+#             */
-/*   Updated: 2025/04/29 23:09:10 by julien           ###   ########.fr       */
+/*   Created: 2025/04/30 11:20:08 by jbanchon          #+#    #+#             */
+/*   Updated: 2025/04/30 12:45:46 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,45 +57,42 @@ int	ft_atoi(char *str)
 
 long long	get_time(void)
 {
-	struct timeval	time;
+	struct time_val	tv;
 
-	if (gettimeofday(&time, NULL) == -1)
+	if (gettimeofday(&tv, NULL) != 0)
 		return (-1);
-	return ((time.tv_sec * 1000) + (time.tv_usec / 1000));
+	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
-int	print_action(t_simulation *sim, int philo_id, char *action)
+void	waiting(long long time, t_sim *sim)
 {
-	long long	current_time;
-	int			sim_ended;
+	long long	start_time;
+	long long	cur;
 
-	pthread_mutex_lock(&(sim->sim_end_mutex));
-	sim_ended = sim->sim_end;
-	pthread_mutex_unlock(&(sim->sim_end_mutex));
-	if (sim_ended && ft_strcnmp(action, "died", 4) != 0)
-		return (0);
-	pthread_mutex_lock(&(sim->print_lock));
-	current_time = get_time();
-	if (current_time < 0)
+	start_time = get_time();
+	while (!check_sim_end(sim))
 	{
-		pthread_mutex_unlock(&(sim->print_lock));
-		return (-1);
+		cur = get_time();
+		if ((cur - start_time) >= time)
+			break ;
+		usleep(100);
 	}
-	pthread_mutex_lock(&(sim->sim_end_mutex));
-	sim_ended = sim->sim_end;
-	pthread_mutex_unlock(&(sim->sim_end_mutex));
-	if (!sim_ended || ft_strcnmp(action, "died", 4) == 0)
-		printf("%lld %d %s\n", current_time - sim->sim_start_time, philo_id,
-			action);
-	pthread_mutex_unlock(&(sim->print_lock));
-	return (0);
 }
 
-void	ft_usleep(long long ms)
+void	philo_think(t_sim *sim)
 {
-	long long	time;
+	struct timeval get_time;
+	struct timeval time_stat;
+	int time_diff;
 
-	time = get_time();
-	while (get_time() - time < ms)
-		usleep(ms / 10);
+	gettimeofday(&get_time, NULL);
+	while (1)
+	{
+		gettimeofday(&time_stat, NULL);
+		time_diff = (time_stat.tv_usec - get_time.tv_usec) + (time_stat.tv_sec
+				- get_time.tv_sec) * 1000000;
+		if (time_diff > sim->time_to_eat * 900)
+			break ;
+		ft_usleep(sim->time_to_eat);
+	}
 }

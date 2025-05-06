@@ -6,7 +6,7 @@
 /*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 11:20:08 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/04/30 12:45:46 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/05/06 10:33:01 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,9 +81,9 @@ void	waiting(long long time, t_sim *sim)
 
 void	philo_think(t_sim *sim)
 {
-	struct timeval get_time;
-	struct timeval time_stat;
-	int time_diff;
+	struct timeval	get_time;
+	struct timeval	time_stat;
+	int				time_diff;
 
 	gettimeofday(&get_time, NULL);
 	while (1)

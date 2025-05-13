@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 11:20:08 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/05/06 10:33:01 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/05/13 22:48:22 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	ft_strcnmp(char *s1, char *s2, int n)
+int	ft_strncmp(char *s1, char *s2, int n)
 {
 	int	i;
 
@@ -51,17 +51,17 @@ int	ft_atoi(char *str)
 	if (res > 9223372036854775807 && sign == -1)
 		return (-1);
 	else if (res > 9223372036854775807)
-		return (0);
+		return (-1);
 	return (res * sign);
 }
 
 long long	get_time(void)
 {
-	struct time_val	tv;
+	struct timeval	tv;
 
-	if (gettimeofday(&tv, NULL) != 0)
+	if (gettimeofday(&tv, NULL) == -1)
 		return (-1);
-	return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
+	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
 void	waiting(long long time, t_sim *sim)
@@ -89,7 +89,7 @@ void	philo_think(t_sim *sim)
 	while (1)
 	{
 		gettimeofday(&time_stat, NULL);
-		time_diff = (time_stat.tv_usec - get_time.tv_usec) + (time_stat.tv_sec
+		time_diff = time_stat.tv_usec - get_time.tv_usec + (time_stat.tv_sec
 				- get_time.tv_sec) * 1000000;
 		if (time_diff > sim->time_to_eat * 900)
 			break ;

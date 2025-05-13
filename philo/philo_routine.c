@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_routine.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 10:39:04 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/05/06 12:11:02 by jbanchon         ###   ########.fr       */
+/*   Updated: 2025/05/13 22:42:15 by julien           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static void	life_status(t_sim *sim, t_philo *philo)
 {
 	if (sim->nb_philo - 1 == philo->philo_id && philo->meals_count == 0)
 		usleep(1);
-	eating(sim, philo);
+	philo_eat(sim, philo);
 	if (sim->nb_philo == 1)
 		waiting((long long)sim->time_to_sleep, sim);
 }
@@ -55,7 +55,7 @@ void	*philo_routine(void *argv)
 		life_status(sim, philo);
 		if (sim->nb_eat == philo->meals_count)
 		{
-			sim->meals_count++;
+			sim->completed_meals++;
 			break ;
 		}
 		print_stat(sim, philo->philo_id, "is sleeping");
@@ -72,11 +72,11 @@ int	print_stat(t_sim *sim, int philo_id, char *msg)
 	pthread_mutex_lock(&(sim->print_mutex));
 	cur_time = get_time();
 	if (cur_time < 0)
-		return (1);
+		return (-1);
 	if (!check_sim_end(sim))
 		printf("%lld %d %s\n", cur_time - sim->start_time, philo_id, msg);
 	if (ft_strncmp(msg, "died", 4) == 0)
-		return (1);
+		return (0);
 	pthread_mutex_unlock(&(sim->print_mutex));
 	return (0);
 }
@@ -86,9 +86,9 @@ void	monitoring(t_sim *sim, t_philo *philo)
 	int			i;
 	long long	cur_time;
 
-	while (!check_sim_end)
+	while (!check_sim_end(sim))
 	{
-		if ((sim->nb_eat != 0) && sim->nb_philo == sim->meals_count)
+		if ((sim->nb_eat != 0) && (sim->nb_philo == sim->completed_meals))
 			lock_and_unlock_mutexes(sim);
 		i = 0;
 		while (i < sim->nb_philo)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 11:46:09 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/05/13 22:51:31 by julien           ###   ########.fr       */
+/*   Updated: 2025/05/16 11:37:52 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,8 @@ int	create_threads(t_philo *philo, t_sim *sim)
 	while (i < sim->nb_philo)
 	{
 		philo[i].last_meal_time = get_time();
-		if (pthread_create(&(philo[i].thread), NULL, philo_routine, &(philo[i])))
+		if (pthread_create(&(philo[i].thread), NULL, philo_routine,
+				&(philo[i])))
 			return (1);
 		i++;
 	}

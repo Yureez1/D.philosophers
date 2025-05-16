@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: julien <julien@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jbanchon <jbanchon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 11:46:37 by jbanchon          #+#    #+#             */
-/*   Updated: 2025/05/10 17:01:39 by julien           ###   ########.fr       */
+/*   Updated: 2025/05/16 11:38:06 by jbanchon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void				destroy_mutexes(t_sim *sim);
 
 /*=====[UTILS]=====*/
 
-int	ft_strncmp(char *s1, char *s2, int n);
+int					ft_strncmp(char *s1, char *s2, int n);
 int					ft_atoi(char *str);
 long long			get_time(void);
 void				waiting(long long time, t_sim *sim);
